@@ -1,19 +1,20 @@
 {
   "summary": {
-    "total_files": 31,
+    "total_files": 37,
     "categories": {
       "other": 2,
       "frontend": 2,
       "docs": 2,
-      "scripts": 13,
+      "scripts": 19,
       "backend": 3,
       "infrastructure": 9
     },
     "file_types": {
       "markdown": 5,
       "bash": 3,
-      "python": 9,
+      "python": 12,
       "sql": 1,
+      "json": 3,
       "yaml": 13
     }
   },
@@ -31,7 +32,7 @@
       "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/系统UI设计方案文档.md",
       "category": "frontend",
       "type": "markdown",
-      "size": 40965,
+      "size": 41763,
       "is_documented": false
     },
     {
@@ -39,7 +40,7 @@
       "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI全栈设计方案.md",
       "category": "docs",
       "type": "markdown",
-      "size": 141519,
+      "size": 144514,
       "is_documented": false
     },
     {
@@ -47,7 +48,7 @@
       "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md",
       "category": "docs",
       "type": "markdown",
-      "size": 68457,
+      "size": 98299,
       "is_documented": false
     },
     {
@@ -64,6 +65,14 @@
       "category": "scripts",
       "type": "markdown",
       "size": 1145,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_doc_integration.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_doc_integration.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2610,
       "is_documented": false
     },
     {
@@ -91,11 +100,27 @@
       "is_documented": false
     },
     {
+      "path": "scripts/repo_inventory.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/repo_inventory.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 9077,
+      "is_documented": false
+    },
+    {
       "path": "scripts/sync_md_code_by_comment.py",
       "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code_by_comment.py",
       "category": "scripts",
       "type": "python",
       "size": 1559,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_completion_report.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_completion_report.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 2161,
       "is_documented": false
     },
     {
@@ -115,11 +140,35 @@
       "is_documented": false
     },
     {
+      "path": "scripts/doc_parser.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/doc_parser.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 9104,
+      "is_documented": false
+    },
+    {
       "path": "scripts/4.2.9 初始化数据库.sh",
       "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.2.9 初始化数据库.sh",
       "category": "scripts",
       "type": "bash",
       "size": 519,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/doc_analysis.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/doc_analysis.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 160299,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_doc_completion.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_doc_completion.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 15009,
       "is_documented": false
     },
     {

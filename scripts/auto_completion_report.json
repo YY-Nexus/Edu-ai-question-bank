@@ -1,67 +1,31 @@
 {
-  "timestamp": "2025-08-26T03:21:10.674502",
-  "processed_files": 26,
+  "timestamp": "2025-08-26T03:22:43.297410",
+  "processed_files": 11,
   "updated_docs": {
     "docs/教育AI题库系统文档.md": {
-      "files_added": 22,
-      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md.backup_20250826_032110",
+      "files_added": 11,
+      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md.backup_20250826_032243",
       "categories": [
-        "infrastructure",
-        "other",
-        "scripts"
-      ]
-    },
-    "docs/教育AI全栈设计方案.md": {
-      "files_added": 3,
-      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI全栈设计方案.md.backup_20250826_032110",
-      "categories": [
-        "backend"
-      ]
-    },
-    "docs/系统UI设计方案文档.md": {
-      "files_added": 1,
-      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/系统UI设计方案文档.md.backup_20250826_032110",
-      "categories": [
-        "frontend"
+        "scripts",
+        "other"
       ]
     }
   },
   "files_by_category": {
-    "infrastructure": [
-      "infra/k8s/rename_yaml_by_content.py",
-      "infra/k8s/ingress_2.yaml",
-      "infra/k8s/tls-secret.yaml",
-      "infra/k8s/redis-persistent.yaml",
-      "infra/k8s/network-policy.yaml",
-      "infra/k8s/ingress.yaml",
-      "infra/k8s/mariadb-configmap_2.yaml",
-      "infra/k8s/mariadb-configmap.yaml",
-      "infra/k8s/redis-deployment.yaml"
+    "scripts": [
+      "scripts/4.2.9 初始化数据库.sh",
+      "scripts/auto_doc_integration.py",
+      "scripts/auto_doc_completion.py",
+      "scripts/4.2.2 创建命名空间.sh",
+      "scripts/auto_completion_report.json",
+      "scripts/5.2.2 索引优化.sql",
+      "scripts/doc_parser.py",
+      "scripts/doc_analysis.json",
+      "scripts/4.1.4 停止服务.sh",
+      "scripts/repo_inventory.json"
     ],
     "other": [
       ".github/workflows/auto-review.yml"
-    ],
-    "scripts": [
-      "scripts/sync_md_code_by_comment.py",
-      "scripts/repo_scanner.py",
-      "scripts/sync_md_code_autoext.py",
-      "scripts/md_code_progress_report.py",
-      "scripts/5.2.2 索引优化.sql",
-      "scripts/split_md_code_autosave.py",
-      "scripts/4.2.9 初始化数据库.sh",
-      "scripts/4.1.4 停止服务.sh",
-      "scripts/4.2.2 创建命名空间.sh",
-      "scripts/sync_md_code.py",
-      "scripts/auto_review_md_vs_code.py",
-      "scripts/split_md_code_advanced.py"
-    ],
-    "backend": [
-      "infra/k8s/backend-deployment_2.yaml",
-      "infra/k8s/backend-deployment_3.yaml",
-      "infra/k8s/backend-deployment.yaml"
-    ],
-    "frontend": [
-      "infra/k8s/frontend-deployment.yaml"
     ]
   }
 }
