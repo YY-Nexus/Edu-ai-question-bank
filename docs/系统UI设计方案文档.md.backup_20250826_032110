@@ -1844,46 +1844,6 @@ export default defineConfig({
 }
 ```
 
-
-#### infra/k8s/frontend-deployment.yaml
-
-Kubernetes前端服务部署配置文件，定义了前端应用的部署规范和负载均衡配置
-
-```yaml
-# frontend-deployment.yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: frontend
-     namespace: edu-ai-system
-   spec:
-     replicas: 2
-     selector:
-       matchLabels:
-         app: frontend
-     template:
-       metadata:
-         labels:
-           app: frontend
-       spec:
-         containers:
-         - name: frontend
-           image: your-registry/edu-ai-frontend:latest
-           ports:
-           - containerPort: 80
-   ---
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: frontend-service
-     namespace: edu-ai-system
-   spec:
-     selector:
-       app: frontend
-     ports:
-     - port: 80
-```
-
 ## 总结
 
 我们实现了以下UI设计改进：

@@ -1,0 +1,270 @@
+{
+  "summary": {
+    "total_files": 31,
+    "categories": {
+      "other": 2,
+      "frontend": 2,
+      "docs": 2,
+      "scripts": 13,
+      "backend": 3,
+      "infrastructure": 9
+    },
+    "file_types": {
+      "markdown": 5,
+      "bash": 3,
+      "python": 9,
+      "sql": 1,
+      "yaml": 13
+    }
+  },
+  "files": [
+    {
+      "path": "auto_review_report.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/auto_review_report.md",
+      "category": "other",
+      "type": "markdown",
+      "size": 46,
+      "is_documented": false
+    },
+    {
+      "path": "docs/系统UI设计方案文档.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/系统UI设计方案文档.md",
+      "category": "frontend",
+      "type": "markdown",
+      "size": 40965,
+      "is_documented": false
+    },
+    {
+      "path": "docs/教育AI全栈设计方案.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI全栈设计方案.md",
+      "category": "docs",
+      "type": "markdown",
+      "size": 141519,
+      "is_documented": false
+    },
+    {
+      "path": "docs/教育AI题库系统文档.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md",
+      "category": "docs",
+      "type": "markdown",
+      "size": 68457,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.1.4 停止服务.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.1.4 停止服务.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 20,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_review_report.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_review_report.md",
+      "category": "scripts",
+      "type": "markdown",
+      "size": 1145,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/md_code_progress_report.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/md_code_progress_report.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2879,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/5.2.2 索引优化.sql",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/5.2.2 索引优化.sql",
+      "category": "scripts",
+      "type": "sql",
+      "size": 604,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code_autoext.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code_autoext.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 1437,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code_by_comment.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code_by_comment.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 1559,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.2.2 创建命名空间.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.2.2 创建命名空间.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 39,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_review_md_vs_code.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_review_md_vs_code.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2686,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.2.9 初始化数据库.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.2.9 初始化数据库.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 519,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/split_md_code_autosave.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/split_md_code_autosave.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2348,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 904,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/repo_scanner.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/repo_scanner.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 6328,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/split_md_code_advanced.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/split_md_code_advanced.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 629,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment_3.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment_3.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 987,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/mariadb-configmap_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/mariadb-configmap_2.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 280,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/tls-secret.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/tls-secret.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 260,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/network-policy.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/network-policy.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 617,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/redis-persistent.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/redis-persistent.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 416,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/mariadb-configmap.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/mariadb-configmap.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 1236,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 288,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/frontend-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/frontend-deployment.yaml",
+      "category": "frontend",
+      "type": "yaml",
+      "size": 640,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/rename_yaml_by_content.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/rename_yaml_by_content.py",
+      "category": "infrastructure",
+      "type": "python",
+      "size": 1736,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/redis-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/redis-deployment.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 678,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/ingress.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/ingress.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 299,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment_2.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 1218,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/ingress_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/ingress_2.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 707,
+      "is_documented": false
+    },
+    {
+      "path": ".github/workflows/auto-review.yml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/.github/workflows/auto-review.yml",
+      "category": "other",
+      "type": "yaml",
+      "size": 622,
+      "is_documented": false
+    }
+  ]
+}

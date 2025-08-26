@@ -1,0 +1,999 @@
+{
+  "comparison": {
+    "existing_but_undocumented": [
+      "scripts/auto_review_report.md",
+      "scripts/4.2.2 创建命名空间.sh",
+      "scripts/4.1.4 停止服务.sh",
+      "auto_review_report.md",
+      "scripts/4.2.9 初始化数据库.sh",
+      "scripts/5.2.2 索引优化.sql",
+      ".github/workflows/auto-review.yml"
+    ],
+    "documented_but_missing": [
+      "项目结构总览",
+      "/backup-db.sh",
+      "/docs/教育AI全栈设计方案.md",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "k8s/tls-secret.yaml",
+      "backend/main.py",
+      "docker-compose.yml",
+      "backend/database.py",
+      "k8s/ingress_2.yaml",
+      "/views/StudentDashboard.vue",
+      "k8s/frontend-deployment.yaml",
+      "frontend/src/App.vue",
+      "k8s/backend-deployment.yaml",
+      "frontend/src/views/TeacherDashboard.vue",
+      "frontend/src/api/index.js",
+      "frontend/src/components/ExcelImport.vue",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "frontend/vite.config.js",
+      "/App.vue",
+      "frontend/src/components/QuestionTable.vue",
+      "/views/AdminPanel.vue",
+      "/docs/教育AI题库系统文档.md",
+      "/path/to/backup-models.sh",
+      "11.更新ExcelImport.vue",
+      "frontend/src/components/CustomNav.vue",
+      "frontend/src/components/HomeworkReview.vue",
+      "frontend/src/components/CustomDialog.vue",
+      "frontend/src/store/index.js",
+      "backend/celery_worker.py",
+      "frontend/src/components/CustomButton.vue",
+      "src=\"https://cdn.example.com/js/app.js",
+      "frontend/src/components/CustomTable.vue",
+      "/CustomButton.vue",
+      "backend/controllers/ai.py",
+      "k8s/edu-ai-ingress.yaml",
+      "k8s/backend-deployment_3.yaml",
+      "backend/utils/cache.py",
+      "/components/ExcelImport.vue",
+      "更新QuestionTable.vue",
+      "/components/HomeworkList.vue",
+      "/CustomCard.vue",
+      "详细表结构请参考backend/models.py",
+      "/docs/系统UI设计方案文档.md",
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "后端/database.py",
+      "k8s/rename_yaml_by_content.py",
+      "/rollback.sh",
+      "/components/CustomCard.vue",
+      "frontend/package.js",
+      "/CustomDialog.vue",
+      "k8s/backend-deployment_2.yaml",
+      "10.更新HomeworkReview.vue",
+      "/components/CustomNav.vue",
+      "frontend/package.json",
+      "/views/Home.vue",
+      "backend/models.py",
+      "frontend/src/components/CustomCard.vue",
+      "/app/backend/main.py",
+      "k8s/network-policy.yaml",
+      "k8s/edu-ai-backend-deployment.yaml",
+      "backend/auth.py",
+      "k8s/redis-persistent.yaml",
+      "frontend/src/router/index.js",
+      "/views/TeacherDashboard.vue",
+      "k8s/mariadb-configmap_2.yaml",
+      "scripts/cleanup_generated_files.py",
+      "github/workflows/auto-review.yml",
+      "/CustomTable.vue",
+      "/views/Login.vue",
+      "3.1题库管理流程",
+      "k8s/ingress.yaml",
+      "/restore-db.sh",
+      "k8s/mariadb-configmap.yaml",
+      "backend/utils/sanitizer.py",
+      "/path/to/backup-db.sh",
+      "修改backend/database.py",
+      "frontend/src/main.js",
+      "k8s/redis-deployment.yaml",
+      "/components/HomeworkReview.vue",
+      "/backup-models.sh",
+      "/components/QuestionTable.vue",
+      "12.更新TeacherDashboard.vue",
+      "backend/controllers/question.py"
+    ],
+    "documented_and_existing": [],
+    "only_referenced": [
+      "k8s/redis-persistent.yaml",
+      "/App.vue",
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "/views/TeacherDashboard.vue",
+      "infra/k8s/rename_yaml_by_content.py",
+      "后端/database.py",
+      "/views/AdminPanel.vue",
+      "/backup-db.sh",
+      "infra/k8s/ingress_2.yaml",
+      "k8s/rename_yaml_by_content.py",
+      "/docs/教育AI题库系统文档.md",
+      "/docs/教育AI全栈设计方案.md",
+      "k8s/mariadb-configmap_2.yaml",
+      "scripts/cleanup_generated_files.py",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "/rollback.sh",
+      "scripts/split_md_code_advanced.py",
+      "docs/系统UI设计方案文档.md",
+      "/components/CustomCard.vue",
+      "scripts/sync_md_code.py",
+      "k8s/tls-secret.yaml",
+      "infra/k8s/redis-deployment.yaml",
+      "github/workflows/auto-review.yml",
+      "scripts/split_md_code_autosave.py",
+      "/path/to/backup-models.sh",
+      "/CustomTable.vue",
+      "backend/database.py",
+      "/views/Login.vue",
+      "k8s/ingress_2.yaml",
+      "infra/k8s/mariadb-configmap.yaml",
+      "infra/k8s/tls-secret.yaml",
+      "docs/教育AI全栈设计方案.md",
+      "infra/k8s/backend-deployment.yaml",
+      "k8s/ingress.yaml",
+      "/views/StudentDashboard.vue",
+      "src=\"https://cdn.example.com/js/app.js",
+      "/restore-db.sh",
+      "/CustomButton.vue",
+      "k8s/mariadb-configmap.yaml",
+      "backend/utils/sanitizer.py",
+      "infra/k8s/frontend-deployment.yaml",
+      "/path/to/backup-db.sh",
+      "k8s/frontend-deployment.yaml",
+      "infra/k8s/redis-persistent.yaml",
+      "k8s/backend-deployment.yaml",
+      "frontend/package.js",
+      "k8s/backend-deployment_3.yaml",
+      "修改backend/database.py",
+      "/CustomDialog.vue",
+      "k8s/backend-deployment_2.yaml",
+      "infra/k8s/ingress.yaml",
+      "/components/CustomNav.vue",
+      "backend/utils/cache.py",
+      "scripts/sync_md_code_by_comment.py",
+      "/components/ExcelImport.vue",
+      "scripts/repo_scanner.py",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "k8s/redis-deployment.yaml",
+      "infra/k8s/backend-deployment_3.yaml",
+      "infra/k8s/network-policy.yaml",
+      "/components/HomeworkList.vue",
+      "/views/Home.vue",
+      "/components/HomeworkReview.vue",
+      "/backup-models.sh",
+      "/CustomCard.vue",
+      "/components/QuestionTable.vue",
+      "scripts/md_code_progress_report.py",
+      "infra/k8s/mariadb-configmap_2.yaml",
+      "infra/k8s/backend-deployment_2.yaml",
+      "详细表结构请参考backend/models.py",
+      "/docs/系统UI设计方案文档.md",
+      "/app/backend/main.py",
+      "k8s/network-policy.yaml",
+      "scripts/auto_review_md_vs_code.py",
+      "docs/教育AI题库系统文档.md",
+      "scripts/sync_md_code_autoext.py"
+    ],
+    "statistics": {
+      "total_actual_files": 31,
+      "total_documented_files": 31,
+      "total_referenced_files": 99,
+      "undocumented_count": 7,
+      "missing_count": 83
+    }
+  },
+  "documentation_result": {
+    "documented_files": {
+      "3.1题库管理流程": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "mermaid",
+        "has_code": true,
+        "code_length": 255
+      },
+      "backend/main.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 842
+      },
+      "backend/models.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 2663
+      },
+      "backend/controllers/question.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 2693
+      },
+      "backend/controllers/ai.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 1210
+      },
+      "backend/celery_worker.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 852
+      },
+      "backend/auth.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 1378
+      },
+      "frontend/src/main.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 530
+      },
+      "frontend/src/router/index.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1699
+      },
+      "frontend/src/views/TeacherDashboard.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 938
+      },
+      "frontend/src/components/QuestionTable.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1871
+      },
+      "frontend/src/components/ExcelImport.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1747
+      },
+      "frontend/src/components/HomeworkReview.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1898
+      },
+      "frontend/src/api/index.js": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "javascript",
+        "has_code": true,
+        "code_length": 772
+      },
+      "docker-compose.yml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 1194
+      },
+      "k8s/edu-ai-ingress.yaml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 732
+      },
+      "k8s/edu-ai-backend-deployment.yaml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 738
+      },
+      "项目结构总览": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1658
+      },
+      "frontend/src/App.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 515
+      },
+      "frontend/src/components/CustomNav.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2923
+      },
+      "frontend/src/components/CustomDialog.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1421
+      },
+      "frontend/src/components/CustomTable.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 5982
+      },
+      "frontend/src/components/CustomButton.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2830
+      },
+      "frontend/src/components/CustomCard.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1518
+      },
+      "更新QuestionTable.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 3733
+      },
+      "10.更新HomeworkReview.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2420
+      },
+      "11.更新ExcelImport.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 3570
+      },
+      "12.更新TeacherDashboard.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1479
+      },
+      "frontend/src/store/index.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1450
+      },
+      "frontend/vite.config.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 748
+      },
+      "frontend/package.json": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 731
+      }
+    },
+    "code_blocks": [
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI题库系统文档.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI题库系统文档.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "项目结构总览",
+        "language": "plaintext",
+        "code": "edu-ai-question-bank/\n├── backend/\n│   ├── controllers/\n│   │   ├── __init__.py\n│   │   ├── ai.py              # AI批改相关API\n│   │   ├── homework.py        # 作业相关API\n│   │   └── question.py       # 题库相关API\n│   ├── migrations/\n│   │   ├── env.py\n│   │   ├── script.py.mako\n│   │   └── versions/\n│   │       └── 20250101_init.py\n│   ├── static/\n│   │   └── question_import_template.xlsx\n│   ├── __init__.py\n│   ├── auth.py               # JWT认证\n│   ├── celery_worker.py      # Celery异步任务\n│   ├── database.py           # 数据库连接\n│   ├── main.py               # FastAPI入口\n│   ├── models.py             # 数据库模型\n│   ├── requirements.txt      # Python依赖\n│   └── Dockerfile            # 后端Dockerfile\n├── frontend/\n│   ├── public/\n│   │   └── index.html\n│   ├── src/\n│   │   ├── api/\n│   │   │   └── index.js      # axios封装\n│   │   ├── assets/\n│   │   ├── components/\n│   │   │   ├── ExcelImport.vue\n│   │   │   ├── HomeworkList.vue\n│   │   │   ├── HomeworkReview.vue\n│   │   │   └── QuestionTable.vue\n│   │   ├── router/\n│   │   │   └── index.js      # 路由配置\n│   │   ├── store/\n│   │   │   └── index.js      # Pinia状态管理\n│   │   ├── views/\n│   │   │   ├── AdminPanel.vue\n│   │   │   ├── Home.vue\n│   │   │   ├── Login.vue\n│   │   │   ├── StudentDashboard.vue\n│   │   │   ├── TeacherDashboard.vue\n│   │   │   └── Register.vue\n│   │   ├── App.vue\n│   │   └── main.js\n│   ├── package.json\n│   ├── vite.config.js\n│   └── Dockerfile            # 前端Dockerfile\n├── k8s/\n│   ├── edu-ai-backend-deployment.yaml\n│   ├── edu-ai-backend-service.yaml\n│   ├── edu-ai-ingress.yaml\n│   └── redis-deployment.yaml\n├── docker-compose.yml         # 本地开发环境\n└── README.md                 # 项目说明",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/App.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div id=\"app\">\n    <router-view v-slot=\"{ Component }\">\n      <transition name=\"page-fade\" mode=\"out-in\">\n        <component :is=\"Component\" />\n      </transition>\n    </router-view>\n  </div>\n</template>\n\n<script setup>\n// 引入全局样式\nimport './styles/theme.css'\n</script>\n\n<style>\n#app {\n  font-family: var(--font-family);\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  color: var(--text-primary);\n  background-color: var(--background-color);\n  min-height: 100vh;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomNav.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <nav class=\"custom-nav\">\n    <div class=\"nav-container\">\n      <div class=\"nav-logo\">\n        <img src=\"@/assets/logo.png\" alt=\"Logo\" class=\"logo\" />\n        <span class=\"logo-text\">教育AI题库系统</span>\n      </div>\n      <div class=\"nav-menu\">\n        <div \n          v-for=\"item in menuItems\" \n          :key=\"item.path\" \n          class=\"nav-item\" \n          :class=\"{ active: currentPath === item.path }\"\n          @click=\"navigateTo(item.path)\"\n        >\n          {{ item.title }}\n        </div>\n      </div>\n      <div class=\"nav-user\">\n        <el-dropdown v-if=\"user\" trigger=\"click\">\n          <div class=\"user-info\">\n            <el-avatar :size=\"32\" :src=\"user.avatar || defaultAvatar\" />\n            <span class=\"username\">{{ user.name || user.username }}</span>\n          </div>\n          <template #dropdown>\n            <el-dropdown-menu>\n              <el-dropdown-item @click=\"goToProfile\">个人中心</el-dropdown-item>\n              <el-dropdown-item @click=\"logout\">退出登录</el-dropdown-item>\n            </el-dropdown-menu>\n          </template>\n        </el-dropdown>\n        <el-button v-else type=\"primary\" @click=\"goToLogin\">登录</el-button>\n      </div>\n    </div>\n  </nav>\n</template>\n\n<script setup>\nimport { ref, computed } from 'vue'\nimport { useRouter, useRoute } from 'vue-router'\nimport { useUserStore } from '@/store'\n\nconst router = useRouter()\nconst route = useRoute()\nconst userStore = useUserStore()\n\nconst currentPath = computed(() => route.path)\nconst user = computed(() => userStore.user)\nconst defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'\n\nconst menuItems = [\n  { title: '首页', path: '/' },\n  { title: '题库', path: '/questions' },\n  { title: '作业', path: '/homework' },\n  { title: '关于', path: '/about' }\n]\n\nconst navigateTo = (path) => {\n  router.push(path)\n}\n\nconst goToLogin = () => {\n  router.push('/login')\n}\n\nconst goToProfile = () => {\n  router.push('/profile')\n}\n\nconst logout = () => {\n  userStore.logout()\n  router.push('/login')\n}\n</script>\n\n<style scoped>\n.custom-nav {\n  background: var(--background-white);\n  box-shadow: var(--box-shadow-light);\n  position: sticky;\n  top: 0;\n  z-index: 1000;\n}\n\n.nav-container {\n  max-width: 1200px;\n  margin: 0 auto;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 60px;\n  padding: 0 20px;\n}\n\n.nav-logo {\n  display: flex;\n  align-items: center;\n}\n\n.logo {\n  height: 32px;\n  margin-right: 10px;\n}\n\n.logo-text {\n  font-size: 18px;\n  font-weight: 600;\n  color: var(--primary-color);\n}\n\n.nav-menu {\n  display: flex;\n  height: 100%;\n}\n\n.nav-user {\n  display: flex;\n  align-items: center;\n}\n\n.user-info {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n}\n\n.username {\n  margin-left: 10px;\n  font-size: 14px;\n  color: var(--text-regular);\n}\n\n@media (max-width: 768px) {\n  .logo-text {\n    display: none;\n  }\n  \n  .nav-menu {\n    display: none;\n  }\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomDialog.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <el-dialog\n    v-model=\"visible\"\n    :title=\"title\"\n    :width=\"width\"\n    :before-close=\"handleClose\"\n    class=\"custom-dialog\"\n    :close-on-click-modal=\"false\"\n    destroy-on-close\n  >\n    <div class=\"dialog-content\">\n      <slot></slot>\n    </div>\n    <template #footer>\n      <div class=\"dialog-footer\">\n        <slot name=\"footer\">\n          <el-button @click=\"handleClose\">取消</el-button>\n          <el-button type=\"primary\" @click=\"handleConfirm\">确定</el-button>\n        </slot>\n      </div>\n    </template>\n  </el-dialog>\n</template>\n\n<script setup>\nimport { ref, watch } from 'vue'\n\nconst props = defineProps({\n  modelValue: {\n    type: Boolean,\n    default: false\n  },\n  title: {\n    type: String,\n    default: '提示'\n  },\n  width: {\n    type: String,\n    default: '50%'\n  }\n})\n\nconst emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])\n\nconst visible = ref(props.modelValue)\n\nwatch(() => props.modelValue, (val) => {\n  visible.value = val\n})\n\nwatch(visible, (val) => {\n  emit('update:modelValue', val)\n})\n\nconst handleClose = () => {\n  visible.value = false\n  emit('cancel')\n}\n\nconst handleConfirm = () => {\n  emit('confirm')\n  visible.value = false\n}\n</script>\n\n<style scoped>\n.custom-dialog {\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n\n.dialog-content {\n  padding: 20px 0;\n}\n\n.dialog-footer {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"custom-table-container\">\n    <el-table\n      :data=\"data\"\n      :border=\"border\"\n      :stripe=\"stripe\"\n      :height=\"height\"\n      :max-height=\"maxHeight\"\n      :row-key=\"rowKey\"\n      :tree-props=\"treeProps\"\n      :default-expand-all=\"defaultExpandAll\"\n      :show-summary=\"showSummary\"\n      :sum-text=\"sumText\"\n      :summary-method=\"summaryMethod\"\n      :span-method=\"spanMethod\"\n      :select-on-indeterminate=\"selectOnIndeterminate\"\n      :indent=\"indent\"\n      :lazy=\"lazy\"\n      :load=\"load\"\n      @select=\"handleSelect\"\n      @select-all=\"handleSelectAll\"\n      @selection-change=\"handleSelectionChange\"\n      @cell-mouse-enter=\"handleCellMouseEnter\"\n      @cell-mouse-leave=\"handleCellMouseLeave\"\n      @cell-click=\"handleCellClick\"\n      @cell-dblclick=\"handleCellDblclick\"\n      @row-click=\"handleRowClick\"\n      @row-contextmenu=\"handleRowContextmenu\"\n      @row-dblclick=\"handleRowDblclick\"\n      @header-click=\"handleHeaderClick\"\n      @header-contextmenu=\"handleHeaderContextmenu\"\n      @sort-change=\"handleSortChange\"\n      @filter-change=\"handleFilterChange\"\n      @current-change=\"handleCurrentChange\"\n      @header-dragend=\"handleHeaderDragend\"\n      @expand-change=\"handleExpandChange\"\n      class=\"custom-table\"\n    >\n      <slot></slot>\n    </el-table>\n    \n    <div v-if=\"pagination\" class=\"table-pagination\">\n      <el-pagination\n        v-model:current-page=\"currentPage\"\n        v-model:page-size=\"pageSize\"\n        :page-sizes=\"pageSizes\"\n        :total=\"total\"\n        :layout=\"layout\"\n        :small=\"small\"\n        :background=\"background\"\n        @size-change=\"handleSizeChange\"\n        @current-change=\"handleCurrentChange\"\n      />\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\n\nconst props = defineProps({\n  data: {\n    type: Array,\n    default: () => []\n  },\n  border: {\n    type: Boolean,\n    default: true\n  },\n  stripe: {\n    type: Boolean,\n    default: true\n  },\n  height: [String, Number],\n  maxHeight: [String, Number],\n  rowKey: [String, Function],\n  treeProps: {\n    type: Object,\n    default: () => ({})\n  },\n  defaultExpandAll: {\n    type: Boolean,\n    default: false\n  },\n  showSummary: {\n    type: Boolean,\n    default: false\n  },\n  sumText: {\n    type: String,\n    default: '合计'\n  },\n  summaryMethod: Function,\n  spanMethod: Function,\n  selectOnIndeterminate: {\n    type: Boolean,\n    default: true\n  },\n  indent: {\n    type: Number,\n    default: 16\n  },\n  lazy: {\n    type: Boolean,\n    default: false\n  },\n  load: Function,\n  pagination: {\n    type: Boolean,\n    default: true\n  },\n  total: {\n    type: Number,\n    default: 0\n  },\n  pageSizes: {\n    type: Array,\n    default: () => [10, 20, 50, 100]\n  },\n  layout: {\n    type: String,\n    default: 'total, sizes, prev, pager, next, jumper'\n  },\n  small: {\n    type: Boolean,\n    default: false\n  },\n  background: {\n    type: Boolean,\n    default: true\n  }\n})\n\nconst emit = defineEmits([\n  'select',\n  'select-all',\n  'selection-change',\n  'cell-mouse-enter',\n  'cell-mouse-leave',\n  'cell-click',\n  'cell-dblclick',\n  'row-click',\n  'row-contextmenu',\n  'row-dblclick',\n  'header-click',\n  'header-contextmenu',\n  'sort-change',\n  'filter-change',\n  'current-change',\n  'header-dragend',\n  'expand-change',\n  'size-change',\n  'update:currentPage',\n  'update:pageSize'\n])\n\nconst currentPage = ref(1)\nconst pageSize = ref(10)\n\nconst handleSelect = (selection, row) => {\n  emit('select', selection, row)\n}\n\nconst handleSelectAll = (selection) => {\n  emit('select-all', selection)\n}\n\nconst handleSelectionChange = (selection) => {\n  emit('selection-change', selection)\n}\n\nconst handleCellMouseEnter = (row, column, cell, event) => {\n  emit('cell-mouse-enter', row, column, cell, event)\n}\n\nconst handleCellMouseLeave = (row, column, cell, event) => {\n  emit('cell-mouse-leave', row, column, cell, event)\n}\n\nconst handleCellClick = (row, column, cell, event) => {\n  emit('cell-click', row, column, cell, event)\n}\n\nconst handleCellDblclick = (row, column, cell, event) => {\n  emit('cell-dblclick', row, column, cell, event)\n}\n\nconst handleRowClick = (row, column, event) => {\n  emit('row-click', row, column, event)\n}\n\nconst handleRowContextmenu = (row, column, event) => {\n  emit('row-contextmenu', row, column, event)\n}\n\nconst handleRowDblclick = (row, column, event) => {\n  emit('row-dblclick', row, column, event)\n}\n\nconst handleHeaderClick = (column, event) => {\n  emit('header-click', column, event)\n}\n\nconst handleHeaderContextmenu = (column, event) => {\n  emit('header-contextmenu', column, event)\n}\n\nconst handleSortChange = (column) => {\n  emit('sort-change', column)\n}\n\nconst handleFilterChange = (filters) => {\n  emit('filter-change', filters)\n}\n\nconst handleCurrentChange = (val) => {\n  emit('current-change', val)\n  emit('update:currentPage', val)\n}\n\nconst handleHeaderDragend = (newWidth, oldWidth, column, event) => {\n  emit('header-dragend', newWidth, oldWidth, column, event)\n}\n\nconst handleExpandChange = (row, expanded) => {\n  emit('expand-change', row, expanded)\n}\n\nconst handleSizeChange = (val) => {\n  emit('size-change', val)\n  emit('update:pageSize', val)\n  currentPage.value = 1\n  emit('update:currentPage', 1)\n}\n</script>\n\n<style scoped>\n.custom-table-container {\n  background: var(--background-white);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n  box-shadow: var(--box-shadow-light);\n  transition: var(--transition-all);\n}\n\n.custom-table-container:hover {\n  box-shadow: var(--box-shadow-base);\n}\n\n.custom-table {\n  width: 100%;\n}\n\n.custom-table .el-table__header-wrapper {\n  background-color: var(--primary-light);\n}\n\n.custom-table .el-table__header th {\n  background-color: var(--primary-light);\n  color: var(--primary-dark);\n  font-weight: 600;\n  border-bottom: 2px solid var(--primary-color);\n}\n\n.custom-table .el-table__body tr:hover > td {\n  background-color: var(--primary-light);\n}\n\n.table-pagination {\n  padding: 15px;\n  display: flex;\n  justify-content: flex-end;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomButton.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <el-button\n    :type=\"type\"\n    :size=\"size\"\n    :plain=\"plain\"\n    :round=\"round\"\n    :circle=\"circle\"\n    :loading=\"loading\"\n    :disabled=\"disabled\"\n    :icon=\"icon\"\n    :autofocus=\"autofocus\"\n    :native-type=\"nativeType\"\n    :loading-icon=\"loadingIcon\"\n    :use-throttle=\"useThrottle\"\n    :throttle-duration=\"throttleDuration\"\n    @click=\"handleClick\"\n    class=\"custom-button\"\n  >\n    <slot></slot>\n  </el-button>\n</template>\n\n<script setup>\nimport { computed } from 'vue'\n\nconst props = defineProps({\n  type: {\n    type: String,\n    default: 'default'\n  },\n  size: {\n    type: String,\n    default: 'default'\n  },\n  plain: {\n    type: Boolean,\n    default: false\n  },\n  round: {\n    type: Boolean,\n    default: false\n  },\n  circle: {\n    type: Boolean,\n    default: false\n  },\n  loading: {\n    type: Boolean,\n    default: false\n  },\n  disabled: {\n    type: Boolean,\n    default: false\n  },\n  icon: {\n    type: String,\n    default: ''\n  },\n  autofocus: {\n    type: Boolean,\n    default: false\n  },\n  nativeType: {\n    type: String,\n    default: 'button'\n  },\n  loadingIcon: {\n    type: String,\n    default: ''\n  },\n  useThrottle: {\n    type: Boolean,\n    default: true\n  },\n  throttleDuration: {\n    type: Number,\n    default: 300\n  }\n})\n\nconst emit = defineEmits(['click'])\n\nconst handleClick = (event) => {\n  emit('click', event)\n}\n</script>\n\n<style scoped>\n.custom-button {\n  transition: var(--transition-all);\n  border-radius: var(--border-radius-base);\n  font-weight: 500;\n  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);\n}\n\n.custom-button:hover {\n  transform: translateY(-2px);\n  box-shadow: var(--box-shadow-base);\n}\n\n.custom-button:active {\n  transform: translateY(0);\n  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.015);\n}\n\n.custom-button--primary {\n  background-color: var(--primary-color);\n  border-color: var(--primary-color);\n}\n\n.custom-button--primary:hover {\n  background-color: var(--primary-dark);\n  border-color: var(--primary-dark);\n}\n\n.custom-button--success {\n  background-color: var(--success-color);\n  border-color: var(--success-color);\n}\n\n.custom-button--success:hover {\n  background-color: var(--success-dark);\n  border-color: var(--success-dark);\n}\n\n.custom-button--warning {\n  background-color: var(--warning-color);\n  border-color: var(--warning-color);\n}\n\n.custom-button--warning:hover {\n  background-color: var(--warning-dark);\n  border-color: var(--warning-dark);\n}\n\n.custom-button--danger {\n  background-color: var(--danger-color);\n  border-color: var(--danger-color);\n}\n\n.custom-button--danger:hover {\n  background-color: var(--danger-dark);\n  border-color: var(--danger-dark);\n}\n\n.custom-button--info {\n  background-color: var(--info-color);\n  border-color: var(--info-color);\n}\n\n.custom-button--info:hover {\n  background-color: var(--info-dark);\n  border-color: var(--info-dark);\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomCard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"custom-card\" :class=\"`custom-card-${variant}`\">\n    <div v-if=\"$slots.header\" class=\"card-header\">\n      <slot name=\"header\"></slot>\n    </div>\n    <div class=\"card-content\">\n      <slot></slot>\n    </div>\n    <div v-if=\"$slots.footer\" class=\"card-footer\">\n      <slot name=\"footer\"></slot>\n    </div>\n  </div>\n</template>\n\n<script setup>\nconst props = defineProps({\n  variant: {\n    type: String,\n    default: 'default',\n    validator: (value) => ['default', 'primary', 'success', 'warning', 'danger', 'info'].includes(value)\n  }\n})\n</script>\n\n<style scoped>\n.custom-card {\n  background: var(--background-white);\n  border-radius: var(--border-radius-large);\n  box-shadow: var(--box-shadow-light);\n  padding: 20px;\n  margin-bottom: 20px;\n  transition: var(--transition-all);\n  border: 1px solid var(--border-light);\n}\n\n.custom-card:hover {\n  box-shadow: var(--box-shadow-base);\n  transform: translateY(-2px);\n}\n\n.custom-card-primary {\n  border-left: 4px solid var(--primary-color);\n}\n\n.custom-card-success {\n  border-left: 4px solid var(--success-color);\n}\n\n.custom-card-warning {\n  border-left: 4px solid var(--warning-color);\n}\n\n.custom-card-danger {\n  border-left: 4px solid var(--danger-color);\n}\n\n.custom-card-info {\n  border-left: 4px solid var(--info-color);\n}\n\n.card-header {\n  padding-bottom: 15px;\n  border-bottom: 1px solid var(--border-light);\n  margin-bottom: 15px;\n}\n\n.card-footer {\n  padding-top: 15px;\n  border-top: 1px solid var(--border-light);\n  margin-top: 15px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "更新QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <CustomCard>\n      <template #header>\n        <div class=\"card-header-content\">\n          <h2>题库管理</h2>\n          <CustomButton type=\"primary\" @click=\"$emit('importExcel')\">\n            <el-icon><Upload /></el-icon>\n            Excel导入\n          </CustomButton>\n        </div>\n      </template>\n      \n      <CustomTable\n        :data=\"questions\"\n        border\n        stripe\n        @row-click=\"viewQuestion\"\n      >\n        <el-table-column prop=\"content\" label=\"题干\" min-width=\"200\" />\n        <el-table-column prop=\"difficulty\" label=\"难度\" width=\"100\" />\n        <el-table-column prop=\"tags\" label=\"标签\" width=\"150\" />\n        <el-table-column label=\"操作\" width=\"100\">\n          <template #default=\"scope\">\n            <CustomButton type=\"primary\" size=\"small\" @click.stop=\"viewQuestion(scope.row)\">\n              查看\n            </CustomButton>\n          </template>\n        </el-table-column>\n      </CustomTable>\n    </CustomCard>\n    \n    <CustomDialog\n      v-model=\"dialogVisible\"\n      title=\"题目详情\"\n      width=\"60%\"\n    >\n      <div v-if=\"selectedQuestion\" class=\"question-detail\">\n        <h3>题干</h3>\n        <p>{{ selectedQuestion.content }}</p>\n        \n        <div v-if=\"selectedQuestion.image_url\" class=\"question-image\">\n          <h3>图片</h3>\n          <el-image \n            :src=\"selectedQuestion.image_url\" \n            fit=\"contain\"\n            style=\"max-width: 100%; max-height: 300px;\"\n          />\n        </div>\n        \n        <div class=\"question-meta\">\n          <div class=\"meta-item\">\n            <span class=\"label\">难度:</span>\n            <span class=\"value\">{{ selectedQuestion.difficulty }}</span>\n          </div>\n          <div class=\"meta-item\">\n            <span class=\"label\">标签:</span>\n            <span class=\"value\">{{ selectedQuestion.tags }}</span>\n          </div>\n        </div>\n        \n        <div class=\"question-explanation\">\n          <h3>解析</h3>\n          <p>{{ selectedQuestion.explanation }}</p>\n        </div>\n      </div>\n      \n      <template #footer>\n        <CustomButton @click=\"dialogVisible = false\">关闭</CustomButton>\n      </template>\n    </CustomDialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\nimport CustomCard from './CustomCard.vue'\nimport CustomTable from './CustomTable.vue'\nimport CustomButton from './CustomButton.vue'\nimport CustomDialog from './CustomDialog.vue'\nimport { Upload } from '@element-plus/icons-vue'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n\n.card-header-content {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.card-header-content h2 {\n  margin: 0;\n  color: var(--text-primary);\n}\n\n.question-detail h3 {\n  margin-top: 20px;\n  margin-bottom: 10px;\n  color: var(--text-primary);\n  font-size: 16px;\n  font-weight: 600;\n}\n\n.question-detail h3:first-child {\n  margin-top: 0;\n}\n\n.question-image {\n  margin-top: 20px;\n}\n\n.question-meta {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n}\n\n.meta-item {\n  margin-right: 30px;\n  margin-bottom: 10px;\n}\n\n.meta-item .label {\n  font-weight: 600;\n  margin-right: 5px;\n  color: var(--text-regular);\n}\n\n.meta-item .value {\n  color: var(--text-primary);\n}\n\n.question-explanation {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "10.更新HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <CustomCard>\n      <template #header>\n        <h2>作业批改</h2>\n      </template>\n      \n      <CustomTable\n        :data=\"assignments\"\n        border\n        stripe\n      >\n        <el-table-column prop=\"studentName\" label=\"学生\" width=\"120\" />\n        <el-table-column prop=\"question\" label=\"题目\" min-width=\"200\" />\n        <el-table-column prop=\"answer\" label=\"学生答案\" min-width=\"200\" />\n        <el-table-column prop=\"ai_explanation\" label=\"AI解析\" min-width=\"200\" />\n        <el-table-column label=\"评分\" width=\"150\">\n          <template #default=\"scope\">\n            <el-input-number \n              v-model=\"scope.row.score\" \n              :min=\"0\" \n              :max=\"100\" \n              :precision=\"1\"\n              size=\"small\"\n            />\n          </template>\n        </el-table-column>\n        <el-table-column label=\"批语\" width=\"200\">\n          <template #default=\"scope\">\n            <el-input v-model=\"scope.row.comment\" size=\"small\" />\n          </template>\n        </el-table-column>\n        <el-table-column label=\"操作\" width=\"120\">\n          <template #default=\"scope\">\n            <CustomButton \n              type=\"primary\" \n              size=\"small\" \n              @click=\"submitReview(scope.row)\"\n              :disabled=\"scope.row.submitted\"\n            >\n              {{ scope.row.submitted ? '已提交' : '提交' }}\n            </CustomButton>\n          </template>\n        </el-table-column>\n      </CustomTable>\n    </CustomCard>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\nimport { ElMessage } from 'element-plus'\nimport CustomCard from './CustomCard.vue'\nimport CustomTable from './CustomTable.vue'\nimport CustomButton from './CustomButton.vue'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "11.更新ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <CustomDialog\n    v-model=\"visible\"\n    title=\"题库Excel导入\"\n    width=\"50%\"\n    @close=\"$emit('close')\"\n  >\n    <div class=\"excel-import-content\">\n      <div class=\"template-download\">\n        <CustomButton type=\"primary\" @click=\"downloadTemplate\">\n          <el-icon><Download /></el-icon>\n          下载Excel模板\n        </CustomButton>\n      </div>\n      \n      <div class=\"upload-section\">\n        <el-upload\n          class=\"upload-demo\"\n          :action=\"uploadUrl\"\n          :headers=\"{ Authorization: 'Bearer ' + token }\"\n          :on-success=\"handleSuccess\"\n          :on-error=\"handleError\"\n          :on-progress=\"handleProgress\"\n          :file-list=\"fileList\"\n          :limit=\"1\"\n          accept=\".xlsx, .xls\"\n          :auto-upload=\"false\"\n          ref=\"uploadRef\"\n        >\n          <template #trigger>\n            <CustomButton type=\"primary\">选择文件</CustomButton>\n          </template>\n          <CustomButton \n            type=\"success\" \n            class=\"upload-btn\"\n            @click=\"submitUpload\"\n            :disabled=\"fileList.length === 0\"\n          >\n            上传\n          </CustomButton>\n          <template #tip>\n            <div class=\"el-upload__tip\">\n              只能上传xlsx/xls文件，且不超过10MB\n            </div>\n          </template>\n        </el-upload>\n      </div>\n      \n      <div v-if=\"uploading\" class=\"upload-progress\">\n        <el-progress :percentage=\"uploadPercentage\" :status=\"uploadStatus\" />\n      </div>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        :closable=\"false\"\n        style=\"margin-top: 20px;\"\n      />\n    </div>\n    \n    <template #footer>\n      <CustomButton @click=\"$emit('close')\">关闭</CustomButton>\n    </template>\n  </CustomDialog>\n</template>\n\n<script setup>\nimport { ref, computed } from 'vue'\nimport axios from '@/api'\nimport { Download } from '@element-plus/icons-vue'\nimport CustomButton from './CustomButton.vue'\nimport CustomDialog from './CustomDialog.vue'\n\nconst props = defineProps({\n  modelValue: {\n    type: Boolean,\n    default: false\n  }\n})\n\nconst emit = defineEmits(['update:modelValue', 'close'])\n\nconst visible = computed({\n  get: () => props.modelValue,\n  set: (val) => emit('update:modelValue', val)\n})\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst uploadRef = ref()\nconst fileList = ref([])\nconst uploading = ref(false)\nconst uploadPercentage = ref(0)\nconst uploadStatus = ref('')\nconst message = ref('')\nconst messageType = ref('success')\n\nconst downloadTemplate = () => {\n  window.open(templateUrl)\n}\n\nconst submitUpload = () => {\n  uploadRef.value.submit()\n}\n\nconst handleSuccess = (response) => {\n  uploading.value = false\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n  uploadPercentage.value = 100\n  uploadStatus.value = 'success'\n}\n\nconst handleError = (error) => {\n  uploading.value = false\n  message.value = '导入失败'\n  messageType.value = 'error'\n  uploadPercentage.value = 0\n  uploadStatus.value = 'exception'\n  console.error('导入错误:', error)\n}\n\nconst handleProgress = (event) => {\n  uploading.value = true\n  uploadPercentage.value = Math.floor(event.percent)\n  uploadStatus.value = ''\n}\n</script>\n\n<style scoped>\n.excel-import-content {\n  padding: 10px 0;\n}\n\n.template-download {\n  margin-bottom: 20px;\n}\n\n.upload-section {\n  margin-bottom: 20px;\n}\n\n.upload-btn {\n  margin-left: 10px;\n}\n\n.upload-progress {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "12.更新TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <CustomNav />\n    \n    <div class=\"dashboard-container\">\n      <CustomCard>\n        <template #header>\n          <h2>教师控制台</h2>\n        </template>\n        \n        <el-tabs v-model=\"activeTab\" class=\"dashboard-tabs\">\n          <el-tab-pane label=\"题库管理\" name=\"questions\">\n            <QuestionTable @importExcel=\"showImport = true\" />\n            <ExcelImport v-if=\"showImport\" v-model=\"showImport\" @close=\"showImport = false\" />\n          </el-tab-pane>\n          <el-tab-pane label=\"作业管理\" name=\"homework\">\n            <HomeworkList />\n          </el-tab-pane>\n          <el-tab-pane label=\"作业批改\" name=\"review\">\n            <HomeworkReview />\n          </el-tab-pane>\n        </el-tabs>\n      </CustomCard>\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport CustomNav from '@/components/CustomNav.vue'\nimport CustomCard from '@/components/CustomCard.vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  min-height: 100vh;\n  background-color: var(--background-color);\n}\n\n.dashboard-container {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 20px;\n}\n\n.dashboard-tabs {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "plaintext",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\nimport { useUserStore } from '@/store'\n\nconst routes = [\n  { \n    path: '/', \n    component: Home,\n    meta: { title: '首页' }\n  },\n  { \n    path: '/login', \n    component: Login,\n    meta: { title: '登录' }\n  },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { \n      requiresAuth: true, \n      role: 'student',\n      title: '学生控制台'\n    } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { \n      requiresAuth: true, \n      role: 'teacher',\n      title: '教师控制台'\n    } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { \n      requiresAuth: true, \n      role: 'admin',\n      title: '管理员控制台'\n    } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes,\n  scrollBehavior(to, from, savedPosition) {\n    if (savedPosition) {\n      return savedPosition\n    } else {\n      return { top: 0 }\n    }\n  }\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const userStore = useUserStore()\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  // 设置页面标题\n  document.title = to.meta.title ? `${to.meta.title} - 教育AI题库系统` : '教育AI题库系统'\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/store/index.js",
+        "language": "plaintext",
+        "code": "import { createPinia, defineStore } from 'pinia'\nimport axios from '@/api'\n\nconst pinia = createPinia()\n\nexport const useUserStore = defineStore('user', {\n  state: () => ({\n    user: null,\n    token: localStorage.getItem('token') || '',\n    role: localStorage.getItem('role') || ''\n  }),\n  \n  getters: {\n    isLoggedIn: (state) => !!state.token,\n    isAdmin: (state) => state.role === 'admin',\n    isTeacher: (state) => state.role === 'teacher',\n    isStudent: (state) => state.role === 'student'\n  },\n  \n  actions: {\n    async login(username, password) {\n      try {\n        const response = await axios.post('/auth/login', { username, password })\n        const { token, role } = response\n        \n        this.token = token\n        this.role = role\n        \n        localStorage.setItem('token', token)\n        localStorage.setItem('role', role)\n        \n        // 获取用户信息\n        await this.fetchUserInfo()\n        \n        return true\n      } catch (error) {\n        console.error('登录失败:', error)\n        return false\n      }\n    },\n    \n    async fetchUserInfo() {\n      try {\n        const response = await axios.get('/users/me')\n        this.user = response\n      } catch (error) {\n        console.error('获取用户信息失败:', error)\n      }\n    },\n    \n    logout() {\n      this.user = null\n      this.token = ''\n      this.role = ''\n      \n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n    }\n  }\n})\n\nexport default pinia",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "plaintext",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport * as ElementPlusIconsVue from '@element-plus/icons-vue'\nimport { createPinia } from 'pinia'\nimport pinia from './store'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\n\n// 注册所有图标\nfor (const [key, component] of Object.entries(ElementPlusIconsVue)) {\n  app.component(key, component)\n}\n\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(pinia)\napp.use(router)\n\napp.mount('#app')",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/vite.config.js",
+        "language": "plaintext",
+        "code": "import { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\nimport { resolve } from 'path'\n\n// https://vitejs.dev/config/\nexport default defineConfig({\n  plugins: [vue()],\n  resolve: {\n    alias: {\n      '@': resolve(__dirname, 'src')\n    }\n  },\n  server: {\n    port: 5173,\n    proxy: {\n      '/api': {\n        target: 'http://localhost:8000',\n        changeOrigin: true,\n        rewrite: (path) => path.replace(/^\\/api/, '')\n      }\n    }\n  },\n  build: {\n    outDir: 'dist',\n    assetsDir: 'assets',\n    sourcemap: false,\n    chunkSizeWarningLimit: 1500,\n    rollupOptions: {\n      output: {\n        manualChunks(id) {\n          if (id.includes('node_modules')) {\n            return 'vendor'\n          }\n        }\n      }\n    }\n  }\n})",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/package.json",
+        "language": "plaintext",
+        "code": "{\n  \"name\": \"edu-ai-frontend\",\n  \"private\": true,\n  \"version\": \"0.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"vite build\",\n    \"preview\": \"vite preview\",\n    \"lint\": \"eslint . --ext vue,js,jsx,cjs,mjs,ts,tsx,cts,mts --fix --ignore-path .gitignore\"\n  },\n  \"dependencies\": {\n    \"@element-plus/icons-vue\": \"^2.1.0\",\n    \"axios\": \"^1.4.0\",\n    \"element-plus\": \"^2.3.8\",\n    \"pinia\": \"^2.1.4\",\n    \"vue\": \"^3.3.4\",\n    \"vue-router\": \"^4.2.4\"\n  },\n  \"devDependencies\": {\n    \"@rushstack/eslint-patch\": \"^1.3.2\",\n    \"@vitejs/plugin-vue\": \"^4.2.3\",\n    \"@vue/eslint-config-prettier\": \"^8.0.0\",\n    \"eslint\": \"^8.45.0\",\n    \"eslint-plugin-vue\": \"^9.15.1\",\n    \"prettier\": \"^3.0.0\",\n    \"vite\": \"^4.4.5\"\n  }\n}",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      }
+    ],
+    "file_references": [
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "后端/database.py",
+      "infra/k8s/ingress_2.yaml",
+      "k8s/rename_yaml_by_content.py",
+      "/backup-db.sh",
+      "/docs/教育AI全栈设计方案.md",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "/rollback.sh",
+      "docs/系统UI设计方案文档.md",
+      "scripts/split_md_code_advanced.py",
+      "/components/CustomCard.vue",
+      "k8s/tls-secret.yaml",
+      "backend/main.py",
+      "backend/database.py",
+      "k8s/ingress_2.yaml",
+      "infra/k8s/mariadb-configmap.yaml",
+      "infra/k8s/tls-secret.yaml",
+      "infra/k8s/backend-deployment.yaml",
+      "/views/StudentDashboard.vue",
+      "infra/k8s/frontend-deployment.yaml",
+      "k8s/frontend-deployment.yaml",
+      "frontend/src/App.vue",
+      "k8s/backend-deployment.yaml",
+      "frontend/package.js",
+      "frontend/src/views/TeacherDashboard.vue",
+      "/CustomDialog.vue",
+      "frontend/src/api/index.js",
+      "k8s/backend-deployment_2.yaml",
+      "infra/k8s/ingress.yaml",
+      "/components/CustomNav.vue",
+      "scripts/sync_md_code_by_comment.py",
+      "frontend/src/components/ExcelImport.vue",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "infra/k8s/backend-deployment_3.yaml",
+      "/views/Home.vue",
+      "backend/models.py",
+      "frontend/src/components/CustomCard.vue",
+      "/app/backend/main.py",
+      "k8s/network-policy.yaml",
+      "scripts/auto_review_md_vs_code.py",
+      "k8s/edu-ai-backend-deployment.yaml",
+      "scripts/sync_md_code_autoext.py",
+      "backend/auth.py",
+      "k8s/redis-persistent.yaml",
+      "frontend/vite.config.js",
+      "/App.vue",
+      "frontend/src/components/QuestionTable.vue",
+      "frontend/src/router/index.js",
+      "/views/TeacherDashboard.vue",
+      "infra/k8s/rename_yaml_by_content.py",
+      "/views/AdminPanel.vue",
+      "/docs/教育AI题库系统文档.md",
+      "k8s/mariadb-configmap_2.yaml",
+      "scripts/cleanup_generated_files.py",
+      "scripts/sync_md_code.py",
+      "infra/k8s/redis-deployment.yaml",
+      "github/workflows/auto-review.yml",
+      "scripts/split_md_code_autosave.py",
+      "/path/to/backup-models.sh",
+      "/CustomTable.vue",
+      "frontend/src/components/CustomNav.vue",
+      "frontend/src/components/HomeworkReview.vue",
+      "/views/Login.vue",
+      "frontend/src/components/CustomDialog.vue",
+      "frontend/src/store/index.js",
+      "backend/celery_worker.py",
+      "docs/教育AI全栈设计方案.md",
+      "k8s/ingress.yaml",
+      "frontend/src/components/CustomButton.vue",
+      "src=\"https://cdn.example.com/js/app.js",
+      "/restore-db.sh",
+      "frontend/src/components/CustomTable.vue",
+      "k8s/mariadb-configmap.yaml",
+      "/CustomButton.vue",
+      "backend/controllers/ai.py",
+      "backend/utils/sanitizer.py",
+      "/path/to/backup-db.sh",
+      "infra/k8s/redis-persistent.yaml",
+      "k8s/edu-ai-ingress.yaml",
+      "k8s/backend-deployment_3.yaml",
+      "修改backend/database.py",
+      "backend/utils/cache.py",
+      "frontend/src/main.js",
+      "/components/ExcelImport.vue",
+      "k8s/redis-deployment.yaml",
+      "infra/k8s/network-policy.yaml",
+      "/components/HomeworkList.vue",
+      "/components/HomeworkReview.vue",
+      "/backup-models.sh",
+      "/CustomCard.vue",
+      "/components/QuestionTable.vue",
+      "scripts/md_code_progress_report.py",
+      "infra/k8s/mariadb-configmap_2.yaml",
+      "infra/k8s/backend-deployment_2.yaml",
+      "详细表结构请参考backend/models.py",
+      "/docs/系统UI设计方案文档.md",
+      "docs/教育AI题库系统文档.md",
+      "scripts/repo_scanner.py",
+      "backend/controllers/question.py"
+    ],
+    "missing_files": [],
+    "doc_summary": {
+      "docs/教育AI题库系统文档.md": {
+        "code_blocks": 2,
+        "file_references": 50,
+        "size": 77467
+      },
+      "docs/教育AI全栈设计方案.md": {
+        "code_blocks": 67,
+        "file_references": 63,
+        "size": 119602
+      },
+      "docs/系统UI设计方案文档.md": {
+        "code_blocks": 15,
+        "file_references": 29,
+        "size": 39625
+      }
+    }
+  }
+}
