@@ -1,6 +1,8 @@
 # 教育AI题库与作业系统UI设计方案
+
 > 前端实现统一的UI设计方案，包括响应交互、视觉效果、动画翻页、弹窗动画、组件导航等。我们将使用Vue3和Element Plus，并添加一些自定义样式和动画效果。
 主要改进点：
+
 1. 统一的配色方案和主题
 2. 过渡动画和微交互
 3. 弹窗动画效果
@@ -8,9 +10,13 @@
 5. 组件导航的视觉优化
 6. 响应式设计
 下面是具体的实现方案和代码：
+
 ### 1. 全局样式和主题
+
 首先，我们定义全局的主题样式，包括颜色、字体、间距等。
+
 #### frontend/src/styles/theme.css
+
 ```plaintext
 :root {
   /* 主题颜色 */
@@ -246,8 +252,11 @@ body {
   }
 }
 ```
+
 ### 2. 修改App.vue引入全局样式
+
 #### frontend/src/App.vue
+
 ```plaintext
 <template>
   <div id="app">
@@ -275,8 +284,11 @@ import './styles/theme.css'
 }
 </style>
 ```
+
 ### 3. 优化组件导航
+
 #### frontend/src/components/CustomNav.vue
+
 ```plaintext
 <template>
   <nav class="custom-nav">
@@ -421,8 +433,11 @@ const logout = () => {
 }
 </style>
 ```
+
 ### 4. 优化弹窗动画
+
 #### frontend/src/components/CustomDialog.vue
+
 ```plaintext
 <template>
   <el-dialog
@@ -506,8 +521,11 @@ const handleConfirm = () => {
 }
 </style>
 ```
+
 ### 5. 优化表格组件
+
 #### frontend/src/components/CustomTable.vue
+
 ```plaintext
 <template>
   <div class="custom-table-container">
@@ -784,8 +802,11 @@ const handleSizeChange = (val) => {
 }
 </style>
 ```
+
 ### 6. 优化页面过渡动画
+
 #### frontend/src/App.vue (更新)
+
 ```plaintext
 <template>
   <div id="app">
@@ -829,8 +850,11 @@ import './styles/theme.css'
 }
 </style>
 ```
+
 ### 7. 优化按钮组件
+
 #### frontend/src/components/CustomButton.vue
+
 ```plaintext
 <template>
   <el-button
@@ -988,8 +1012,11 @@ const handleClick = (event) => {
 }
 </style>
 ```
+
 ### 8. 优化卡片组件
+
 #### frontend/src/components/CustomCard.vue
+
 ```plaintext
 <template>
   <div class="custom-card" :class="`custom-card-${variant}`">
@@ -1064,8 +1091,11 @@ const props = defineProps({
 }
 </style>
 ```
+
 ### 9. 更新现有组件使用自定义组件
+
 #### 更新 QuestionTable.vue
+
 ```plaintext
 <template>
   <div class="question-table">
@@ -1229,7 +1259,9 @@ const viewQuestion = (question) => {
 }
 </style>
 ```
+
 ### 10. 更新 HomeworkReview.vue
+
 ```plaintext
 <template>
   <div class="homework-review">
@@ -1322,7 +1354,9 @@ const submitReview = async (assignment) => {
 }
 </style>
 ```
+
 ### 11. 更新 ExcelImport.vue
+
 ```plaintext
 <template>
   <CustomDialog
@@ -1479,7 +1513,9 @@ const handleProgress = (event) => {
 }
 </style>
 ```
+
 ### 12. 更新 TeacherDashboard.vue
+
 ```plaintext
 <template>
   <div class="teacher-dashboard">
@@ -1538,8 +1574,11 @@ const showImport = ref(false)
 }
 </style>
 ```
+
 ### 13. 更新路由配置
+
 #### frontend/src/router/index.js
+
 ```plaintext
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
@@ -1625,8 +1664,11 @@ router.beforeEach((to, from, next) => {
 
 export default router
 ```
+
 ### 14. 创建状态管理
+
 #### frontend/src/store/index.js
+
 ```plaintext
 import { createPinia, defineStore } from 'pinia'
 import axios from '@/api'
@@ -1691,8 +1733,11 @@ export const useUserStore = defineStore('user', {
 
 export default pinia
 ```
+
 ### 15. 更新 main.js
+
 #### frontend/src/main.js
+
 ```plaintext
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
@@ -1717,8 +1762,11 @@ app.use(router)
 
 app.mount('#app')
 ```
+
 ### 16. 更新 vite.config.js
+
 #### frontend/vite.config.js
+
 ```plaintext
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -1759,8 +1807,11 @@ export default defineConfig({
   }
 })
 ```
+
 ### 17. 更新 package.json
+
 #### frontend/package.json
+
 ```plaintext
 {
   "name": "edu-ai-frontend",
@@ -1792,8 +1843,11 @@ export default defineConfig({
   }
 }
 ```
+
 ## 总结
+
 我们实现了以下UI设计改进：
+
 1. 统一的主题系统：通过CSS变量定义了完整的主题色、文字颜色、边框、背景等，便于全局维护和主题切换。
 2. 响应交互：
     - 按钮悬停效果（上移+阴影）
@@ -1829,3 +1883,4 @@ export default defineConfig({
     - 自定义滚动条样式
     - 响应式设计适配移动端
     - 统一的间距和排版
+这些改进使整个应用具有一致的外观和感觉，增强了用户体验，并使界面更加现代和专业。所有组件都遵循相同的设计语言，确保了视觉上的连贯性。。

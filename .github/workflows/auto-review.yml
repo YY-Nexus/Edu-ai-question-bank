@@ -1,0 +1,28 @@
+name: Auto Review Docs vs Code
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Clean generated files
+        run: python scripts/cleanup_generated_files.py
+
+      - name: Split Markdown docs
+        run: python scripts/split_md_code_autosave.py
+
+      - name: Auto Review
+        run: python scripts/auto_review_md_vs_code.py

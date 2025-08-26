@@ -1,6 +1,8 @@
 # 教育AI题库与作业系统文档
+
 ## 1. 产品需求文档（PRD）
-```plaintext
+
+```markdown
 # 教育AI题库与作业系统产品需求文档
 
 ## 1. 文档概述
@@ -45,111 +47,123 @@ graph TD
     H --> J[更新题库]
     F --> J
 ```
+
 ### 3.2 作业批改流程
-是
-否
-学生提交作业
-系统记录答案
-触发AI批改任务
-Celery队列处理
-AI模型批改
-生成批改结果
-更新作业状态
-教师查看批改结果
-是否需要人工调整
-教师修改评分/批语
-批改完成
+
+```mermaid
+graph TD
+    A[学生提交作业] --> B[系统记录答案]
+    B --> C[触发AI批改任务]
+    C --> D[Celery队列处理]
+    D --> E[AI模型批改]
+    E --> F[生成批改结果]
+    F --> G[更新作业状态]
+    G --> H[教师查看批改结果]
+    H --> I{是否需要人工调整}
+    I -->|是| J[教师修改评分/批语]
+    I -->|否| K[批改完成]
+    J --> K
+```
+
 ## 4. 功能优先级
+
 ### 4.1 高优先级（核心功能）
+
 1. 用户认证与权限管理
-    - 用户注册、登录、角色分配
-    - 基于角色的访问控制
+   - 用户注册、登录、角色分配
+   - 基于角色的访问控制
 2. 题库管理
-    - 题目的增删改查
-    - 题目分类（学科、难度、标签）
-    - Excel批量导入
+   - 题目的增删改查
+   - 题目分类（学科、难度、标签）
+   - Excel批量导入
 3. 作业管理
-    - 作业创建与发布
-    - 学生作业提交
-    - 作业状态跟踪
+   - 作业创建与发布
+   - 学生作业提交
+   - 作业状态跟踪
 4. AI批改服务
-    - 客观题自动批改
-    - 主观题AI辅助批改
-    - 批改结果生成
+   - 客观题自动批改
+   - 主观题AI辅助批改
+   - 批改结果生成
+
 ### 4.2 中优先级（增强功能）
+
 1. 作业统计分析
-    - 学生答题正确率统计
-    - 知识点掌握度分析
-    - 班级成绩分布
+   - 学生答题正确率统计
+   - 知识点掌握度分析
+   - 班级成绩分布
 2. 通知系统
-    - 作业发布通知
-    - 批改完成通知
-    - 系统消息推送
+   - 作业发布通知
+   - 批改完成通知
+   - 系统消息推送
 3. 题库共享
-    - 教师间题库共享
-    - 公共题库管理
+   - 教师间题库共享
+   - 公共题库管理
+
 ### 4.3 低优先级（扩展功能）
+
 1. 多模态支持
-    - 图片题目OCR识别
-    - 语音答案转录
-    - 公式识别与解析
+   - 图片题目OCR识别
+   - 语音答案转录
+   - 公式识别与解析
 2. 学习路径推荐
-    - 基于答题情况推荐学习资源
-    - 个性化学习计划生成
+   - 基于答题情况推荐学习资源
+   - 个性化学习计划生成
 3. 移动端适配
-    - 响应式设计优化
-    - 移动App开发
+   - 响应式设计优化
+   - 移动App开发
+
 ## 5. 非功能性需求
+
 ### 5.1 性能需求
+
 - 系统响应时间：普通操作<2秒，AI批改<30秒
 - 支持并发用户：100+教师同时在线
 - 题库容量：支持10万+题目
+
 ### 5.2 安全需求
+
 - 用户密码加密存储
 - API接口JWT认证
 - 敏感数据传输加密
 - 定期数据备份
+
 ### 5.3 可用性需求
+
 - 系统可用性≥99.5%
 - 支持浏览器：Chrome、Firefox、Edge最新版本
 - 移动设备兼容性：响应式设计
+
 ## 6. 验收标准
+
 ### 6.1 题库管理验收
+
 - 教师可以成功创建、编辑、删除题目
 - Excel导入功能支持正确解析和验证数据
 - 题目可以按学科、难度、标签分类筛选
+
 ### 6.2 作业管理验收
+
 - 教师可以成功创建和发布作业
 - 学生可以查看并提交作业
 - 作业状态正确跟踪（未提交、已提交、已批改）
+
 ### 6.3 AI批改验收
+
 - 客观题批改准确率≥98%
 - 主观题批改结果合理，提供有效反馈
 - AI批改任务在30秒内完成
-## 7. 修订历史
-|版本|日期|修改内容|修改人|
-|-|-|-|-|
-|1.0|2023-10-01|初稿|产品经理|
-|1.1|2023-10-15|增加用户故事和流程图|产品经理|
-|1.2|2023-10-20|调整功能优先级|产品经理|
 
-            版本
-            日期
-            修改内容
-            修改人
-            1.0
-            2023-10-01
-            初稿
-            产品经理
-            1.1
-            2023-10-15
-            增加用户故事和流程图
-            产品经理
-            1.2
-            2023-10-20
-            调整功能优先级
-            产品经理
-```plaintext
+## 7. 修订历史
+
+| 版本 | 日期       | 修改内容         | 修改人   |
+|------|------------|------------------|----------|
+| 1.0  | 2023-10-01 | 初稿             | 产品经理 |
+| 1.1  | 2023-10-15 | 增加用户故事和流程图 | 产品经理 |
+| 1.2  | 2023-10-20 | 调整功能优先级   | 产品经理 |
+
+```
+
+
 ## 2. 系统设计文档（SDD）
 
 ```markdown
@@ -162,6 +176,7 @@ AI模型批改
 
 ### 2.1 架构图
 系统采用前后端分离的微服务架构，主要包含以下组件：
+
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   前端应用       │    │   API网关        │    │   认证服务       │
@@ -184,7 +199,8 @@ AI模型批改
 │  (MariaDB)       │    │   (Redis)        │    │   (NAS)         │
 │                 │    │                 │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-```plaintext
+```
+
 ### 2.2 模块间关系
 1. **前端应用**：通过HTTP请求与API网关交互，负责用户界面展示和交互
 2. **API网关**：统一入口，处理请求路由、认证和负载均衡
@@ -257,77 +273,77 @@ AI模型批改
 ### 4.1 核心表结构
 
 #### 4.1.1 用户表（users）
-| 字段名 | 类型 | 约束 | 描述 |
-|--------|------|------|------|
-| id | INT | PK, AUTO_INCREMENT | 用户ID |
-| username | VARCHAR(100) | UNIQUE, NOT NULL | 用户名 |
-| password_hash | VARCHAR(255) | NOT NULL | 密码哈希 |
-| name | VARCHAR(100) | | 真实姓名 |
-| role | ENUM('student','teacher','admin') | NOT NULL | 用户角色 |
-| email | VARCHAR(255) | UNIQUE | 电子邮箱 |
-| phone | VARCHAR(20) | | 手机号码 |
-| register_time | DATETIME | NOT NULL | 注册时间 |
-| last_login | DATETIME | | 最后登录时间 |
-| status | TINYINT | DEFAULT 1 | 状态(1:正常,0:禁用) |
+| 字段名        | 类型             | 约束                     | 描述             |
+|---------------|------------------|--------------------------|------------------|
+| id            | INT              | PK, AUTO_INCREMENT       | 用户ID           |
+| username      | VARCHAR(100)     | UNIQUE, NOT NULL         | 用户名           |
+| password_hash | VARCHAR(255)     | NOT NULL                 | 密码哈希         |
+| name          | VARCHAR(100)     |                          | 真实姓名         |
+| role          | ENUM('student','teacher','admin') | NOT NULL | 用户角色         |
+| email         | VARCHAR(255)     | UNIQUE                   | 电子邮箱         |
+| phone         | VARCHAR(20)      |                          | 手机号码         |
+| register_time | DATETIME         | NOT NULL                 | 注册时间         |
+| last_login    | DATETIME         |                          | 最后登录时间     |
+| status        | TINYINT          | DEFAULT 1                | 状态(1:正常,0:禁用) |
 
 #### 4.1.2 学科表（subjects）
-| 字段名 | 类型 | 约束 | 描述 |
-|--------|------|------|------|
-| id | INT | PK, AUTO_INCREMENT | 学科ID |
-| name | VARCHAR(50) | NOT NULL | 学科名称 |
-| code | VARCHAR(20) | UNIQUE | 学科代码 |
-| description | TEXT | | 学科描述 |
-| created_by | INT | FK(users.id) | 创建人ID |
-| created_at | DATETIME | NOT NULL | 创建时间 |
+| 字段名      | 类型         | 约束               | 描述       |
+|-------------|--------------|--------------------|------------|
+| id          | INT          | PK, AUTO_INCREMENT | 学科ID     |
+| name        | VARCHAR(50)  | NOT NULL           | 学科名称   |
+| code        | VARCHAR(20)  | UNIQUE             | 学科代码   |
+| description | TEXT         |                    | 学科描述   |
+| created_by  | INT          | FK(users.id)       | 创建人ID   |
+| created_at  | DATETIME     | NOT NULL           | 创建时间   |
 
 #### 4.1.3 题目表（questions）
-| 字段名 | 类型 | 约束 | 描述 |
-|--------|------|------|------|
-| id | INT | PK, AUTO_INCREMENT | 题目ID |
-| subject_id | INT | FK(subjects.id) | 学科ID |
-| type_id | INT | NOT NULL | 题型ID |
-| content | TEXT | NOT NULL | 题干内容 |
-| option_a | VARCHAR(500) | | 选项A |
-| option_b | VARCHAR(500) | | 选项B |
-| option_c | VARCHAR(500) | | 选项C |
-| option_d | VARCHAR(500) | | 选项D |
-| answer | TEXT | | 标准答案 |
-| explanation | TEXT | | 解析 |
-| difficulty | ENUM('易','中','难','奥数') | NOT NULL | 难度 |
-| tags | VARCHAR(255) | | 标签(逗号分隔) |
-| image_url | VARCHAR(500) | | 题目图片URL |
-| extra_json | TEXT | | 扩展字段(JSON) |
-| created_by | INT | FK(users.id) | 创建人ID |
-| created_at | DATETIME | NOT NULL | 创建时间 |
-| updated_at | DATETIME | NOT NULL | 更新时间 |
+| 字段名         | 类型                          | 约束               | 描述               |
+|----------------|-------------------------------|--------------------|--------------------|
+| id             | INT                           | PK, AUTO_INCREMENT | 题目ID             |
+| subject_id     | INT                           | FK(subjects.id)    | 学科ID             |
+| type_id        | INT                           | NOT NULL           | 题型ID             |
+| content        | TEXT                          | NOT NULL           | 题干内容           |
+| option_a       | VARCHAR(500)                  |                    | 选项A              |
+| option_b       | VARCHAR(500)                  |                    | 选项B              |
+| option_c       | VARCHAR(500)                  |                    | 选项C              |
+| option_d       | VARCHAR(500)                  |                    | 选项D              |
+| answer         | TEXT                          |                    | 标准答案           |
+| explanation    | TEXT                          |                    | 解析               |
+| difficulty     | ENUM('易','中','难','奥数')   | NOT NULL           | 难度               |
+| tags           | VARCHAR(255)                  |                    | 标签(逗号分隔)     |
+| image_url      | VARCHAR(500)                  |                    | 题目图片URL        |
+| extra_json     | TEXT                          |                    | 扩展字段(JSON)     |
+| created_by     | INT                           | FK(users.id)       | 创建人ID           |
+| created_at     | DATETIME                      | NOT NULL           | 创建时间           |
+| updated_at     | DATETIME                      | NOT NULL           | 更新时间           |
 
 #### 4.1.4 作业表（homework）
-| 字段名 | 类型 | 约束 | 描述 |
-|--------|------|------|------|
-| id | INT | PK, AUTO_INCREMENT | 作业ID |
-| title | VARCHAR(255) | NOT NULL | 作业标题 |
-| description | TEXT | | 作业描述 |
-| teacher_id | INT | FK(users.id) | 教师ID |
-| start_time | DATETIME | NOT NULL | 开始时间 |
-| end_time | DATETIME | NOT NULL | 截止时间 |
-| status | ENUM('draft','published','closed') | NOT NULL | 状态 |
-| created_at | DATETIME | NOT NULL | 创建时间 |
+| 字段名      | 类型                            | 约束               | 描述         |
+|-------------|---------------------------------|--------------------|--------------|
+| id          | INT                             | PK, AUTO_INCREMENT | 作业ID       |
+| title       | VARCHAR(255)                    | NOT NULL           | 作业标题     |
+| description | TEXT                            |                    | 作业描述     |
+| teacher_id  | INT                             | FK(users.id)       | 教师ID       |
+| start_time  | DATETIME                        | NOT NULL           | 开始时间     |
+| end_time    | DATETIME                        | NOT NULL           | 截止时间     |
+| status      | ENUM('draft','published','closed') | NOT NULL        | 状态         |
+| created_at  | DATETIME                        | NOT NULL           | 创建时间     |
 
 #### 4.1.5 作业分配表（homework_assignments）
-| 字段名 | 类型 | 约束 | 描述 |
-|--------|------|------|------|
-| id | INT | PK, AUTO_INCREMENT | 分配ID |
-| homework_id | INT | FK(homework.id) | 作业ID |
-| student_id | INT | FK(users.id) | 学生ID |
-| question_id | INT | FK(questions.id) | 题目ID |
-| answer | TEXT | | 学生答案 |
-| answer_image_url | VARCHAR(500) | | 答案图片URL |
-| score | DECIMAL(5,2) | | 得分 |
-| ai_explanation | TEXT | | AI解析 |
-| comment | TEXT | | 教师批语 |
-| submit_time | DATETIME | | 提交时间 |
-| review_time | DATETIME | | 批改时间 |
-| status | ENUM('pending','submitted','reviewed') | NOT NULL | 状态 |
+| 字段名            | 类型                          | 约束                    | 描述               |
+|-------------------|-------------------------------|-------------------------|--------------------|
+| id                | INT                           | PK, AUTO_INCREMENT      | 分配ID             |
+| homework_id       | INT                           | FK(homework.id)         | 作业ID             |
+| student_id        | INT                           | FK(users.id)            | 学生ID             |
+| question_id       | INT                           | FK(questions.id)        | 题目ID             |
+| answer            | TEXT                          |                         | 学生答案           |
+| answer_image_url  | VARCHAR(500)                  |                         | 答案图片URL        |
+| score             | DECIMAL(5,2)                  |                         | 得分               |
+| ai_explanation    | TEXT                          |                         | AI解析             |
+| comment           | TEXT                          |                         | 教师批语           |
+| submit_time       | DATETIME                      |                         | 提交时间           |
+| review_time       | DATETIME                      |                         | 批改时间           |
+| status            | ENUM('pending','submitted','reviewed') | NOT NULL      | 状态               |
 
 ### 4.2 数据库关系图
 ```
@@ -342,7 +358,8 @@ homework
 └── N:1 users (teacher_id)
 questions
 └── 1:N homework_assignments (question_id)
-```plaintext
+```
+
 ## 5. 关键接口交互逻辑
 
 ### 5.1 用户登录与认证流程
@@ -472,8 +489,10 @@ questions
 | 1.1  | 2023-10-15 | 完善架构图和模块职责 | 架构师 |
 | 1.2  | 2023-10-20 | 补充接口交互逻辑 | 架构师 |
 ```
+
 ## 3. 用户手册
-```plaintext
+
+```markdown
 # 教育AI题库与作业系统用户手册
 
 ## 1. 欢迎使用教育AI题库与作业系统
@@ -530,7 +549,7 @@ questions
 4. 点击题目行操作列的"练习"按钮，可以尝试解答该题目。
 5. 提交答案后，系统会显示正确答案和解析，帮助学生理解。
 
-## 4. 下单支付（作业提交）
+## 4. 作业管理
 
 ### 4.1 教师布置作业
 1. 登录教师控制台，点击"作业管理"标签页。
@@ -570,7 +589,7 @@ questions
    - 点击"保存批改"按钮。
 6. 批改完成后，系统会自动通知学生批改结果。
 
-## 5. 查看订单（作业成绩）
+## 5. 查看成绩
 
 ### 5.1 学生查看作业成绩
 1. 登录学生控制台，点击"我的成绩"标签页。
@@ -646,8 +665,10 @@ questions
 
 如需查看完整更新日志，请访问系统"关于"页面。
 ```
+
 ## 4. 部署文档
-```plaintext
+
+```markdown
 # 教育AI题库与作业系统部署文档
 
 ## 1. 部署概述
@@ -692,7 +713,9 @@ questions
 ## 3. 部署架构
 
 ### 3.1 开发环境架构
+
 ```
+
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   开发机         │    │   Docker主机     │    │   NAS存储       │
 │                 │    │                 │    │                 │
@@ -709,10 +732,13 @@ questions
 │ │ (MariaDB)   │ │    │ │ (MariaDB)   │ │    │ │             │ │
 │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-```plaintext
-### 3.2 生产环境架构
 ```
-```plaintext
+
+
+### 3.2 生产环境架构
+
+```
+
                       ┌─────────────────┐
                       │   负载均衡器     │
                       │   (Nginx/ALB)   │
@@ -733,7 +759,6 @@ questions
 ┌───────────────┼───────────────┐
 │               │               │
 
-```
 ┌───▼───┐     ┌─────▼─────┐   ┌─────▼─────┐
 │前端服务│     │  认证服务  │   │  监控服务  │
 │集群   │     │  集群     │   │  (Prometheus)│
@@ -759,7 +784,9 @@ questions
 │  数据库    │     │   NAS存储   │
 │  (MariaDB) │     │  (模型文件) │
 └───────────┘     └─────────────┘
-```plaintext
+
+```
+
 ## 4. 部署步骤
 
 ### 4.1 开发环境部署 (Docker Compose)
@@ -769,184 +796,212 @@ questions
    ```bash
    git clone https://github.com/your-org/edu-ai-system.git
    cd edu-ai-system
-```
-1. 创建环境变量文件
-    ```plaintext
-cp .env.example .env
+   ```
 
-```
-    编辑.env文件，配置以下变量：
-    ```plaintext
-DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db
-CELERY_BROKER_URL=redis://redis:6379/0
-SECRET_KEY=your-secret-key-here
-NAS_MODEL_PATH=/mnt/nas/models
-```
-2. 创建必要的目录
-    ```plaintext
-mkdir -p ./data/mysql
-mkdir -p ./data/redis
-mkdir -p ./models
+2. 创建环境变量文件
 
-```
-3. 下载AI模型到./models目录
-    ```plaintext
-# 示例：下载Gemma模型
-git lfs install
-git clone https://huggingface.co/google/gemma-2b-it ./models/gemma-2b-it
-```
+   ```bash
+   cp .env.example .env
+   ```
+
+   编辑.env文件，配置以下变量：
+
+   ```bash
+   DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db
+   CELERY_BROKER_URL=redis://redis:6379/0
+   SECRET_KEY=your-secret-key-here
+   NAS_MODEL_PATH=/mnt/nas/models
+   ```
+
+3. 创建必要的目录
+
+   ```bash
+   mkdir -p ./data/mysql
+   mkdir -p ./data/redis
+   mkdir -p ./models
+   ```
+
+4. 下载AI模型到./models目录
+
+   ```bash
+   # 示例：下载Gemma模型
+   git lfs install
+   git clone https://huggingface.co/google/gemma-2b-it ./models/gemma-2b-it
+   ```
+
 #### 4.1.2 启动服务
+
 1. 构建并启动所有服务
-    ```plaintext
-docker-compose up -d --build
 
-```
+   ```bash
+   docker-compose up -d --build
+   ```
+
 2. 查看服务状态
-    ```plaintext
-docker-compose ps
 
-```
+   ```bash
+   docker-compose ps
+   ```
+
 3. 查看日志
-    ```plaintext
-docker-compose logs -f backend
-docker-compose logs -f frontend
 
-```
+   ```bash
+   docker-compose logs -f backend
+   docker-compose logs -f frontend
+   ```
+
 4. 初始化数据库
-    ```plaintext
-# 进入后端容器
-docker-compose exec backend bash
 
-# 运行数据库迁移
-alembic upgrade head
+   ```bash
+   # 进入后端容器
+   docker-compose exec backend bash
 
-# 创建初始管理员用户（可选）
-python -c "from backend.database import SessionLocal; from backend.models import User; from backend.auth import get_password_hash; db = SessionLocal(); admin = User(username='admin', password_hash=get_password_hash('admin'), name='管理员', role='admin'); db.add(admin); db.commit(); print('管理员用户已创建')"
-```
+   # 运行数据库迁移
+   alembic upgrade head
+
+   # 创建初始管理员用户（可选）
+   python -c "from backend.database import SessionLocal; from backend.models import User; from backend.auth import get_password_hash; db = SessionLocal(); admin = User(username='admin', password_hash=get_password_hash('admin'), name='管理员', role='admin'); db.add(admin); db.commit(); print('管理员用户已创建')"
+   ```
+
 #### 4.1.3 访问系统
+
 - 前端界面: http://localhost:5173
 - 后端API: http://localhost:8000
 - API文档: http://localhost:8000/docs
+
 #### 4.1.4 停止服务
-```plaintext
+
+```bash
 docker-compose down
-
 ```
+
 ### 4.2 生产环境部署 (Kubernetes)
+
 #### 4.2.1 准备工作
+
 1. 安装和配置Kubernetes集群
-    - 可以使用云服务商提供的Kubernetes服务（如EKS、GKE、ACK）
-    - 或使用kubeadm自建集群
+   - 可以使用云服务商提供的Kubernetes服务（如EKS、GKE、ACK）
+   - 或使用kubeadm自建集群
+
 2. 安装kubectl并配置kubeconfig
-    ```plaintext
-kubectl cluster-info
 
-```
+   ```bash
+   kubectl cluster-info
+   ```
+
 3. 安装Helm 3（可选，用于管理复杂应用）
-    ```plaintext
-# 下载Helm
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update
-sudo apt-get install helm
-```
+
+   ```bash
+   # 下载Helm
+   curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+   sudo apt-get update
+   sudo apt-get install helm
+   ```
+
 4. 准备NAS存储
-    - 确保Kubernetes节点可以访问NAS
-    - 创建PersistentVolume和PersistentVolumeClaim
+   - 确保Kubernetes节点可以访问NAS
+   - 创建PersistentVolume和PersistentVolumeClaim
+
 #### 4.2.2 创建命名空间
-```plaintext
+
+```bash
 kubectl create namespace edu-ai-system
-
 ```
+
 #### 4.2.3 部署数据库
+
 1. 创建MariaDB配置文件
-    ```plaintext
-# mariadb-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mariadb-config
-  namespace: edu-ai-system
-data:
-  my.cnf: |
-    [mysqld]
-    character-set-server=utf8mb4
-    collation-server=utf8mb4_unicode_ci
-    max_allowed_packet=256M
-```
+
+   ```yaml
+   # mariadb-configmap.yaml
+   apiVersion: v1
+   kind: ConfigMap
+   metadata:
+     name: mariadb-config
+     namespace: edu-ai-system
+   data:
+     my.cnf: |
+       [mysqld]
+       character-set-server=utf8mb4
+       collation-server=utf8mb4_unicode_ci
+       max_allowed_packet=256M
+   ```
+
 2. 创建MariaDB部署
-    ```plaintext
-# mariadb-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mariadb
-  namespace: edu-ai-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mariadb
-  template:
-    metadata:
-      labels:
-        app: mariadb
-    spec:
-      containers:
-      - name: mariadb
-        image: mariadb:10.6
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mariadb-secret
-              key: root-password
-        - name: MYSQL_DATABASE
-          value: edu_ai_db
-        volumeMounts:
-        - name: mariadb-data
-          mountPath: /var/lib/mysql
-        - name: config
-          mountPath: /etc/mysql/conf.d
-      volumes:
-      - name: mariadb-data
-        persistentVolumeClaim:
-          claimName: mariadb-pvc
-      - name: config
-        configMap:
-          name: mariadb-config
-```
-3. 创建MariaDB服务
-    ```plaintext
-# mariadb-service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: mariadb
-  namespace: edu-ai-system
-spec:
-  selector:
-    app: mariadb
-  ports:
-  - port: 3306
-  clusterIP: None
-```
-4. 创建数据库密码Secret
-    ```plaintext
-kubectl create secret generic mariadb-secret --from-literal=root-password=yourpassword -n edu-ai-system
 
-```
-5. 应用配置
-    ```plaintext
-kubectl apply -f mariadb-configmap.yaml
-kubectl apply -f mariadb-deployment.yaml
-kubectl apply -f mariadb-service.yaml
+   ```yaml
+   # mariadb-deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: mariadb
+     namespace: edu-ai-system
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: mariadb
+     template:
+       metadata:
+         labels:
+           app: mariadb
+       spec:
+         containers:
+         - name: mariadb
+           image: mariadb:10.6
+           ports:
+           - containerPort: 3306
+           env:
+           - name: MYSQL_ROOT_PASSWORD
+             valueFrom:
+               secretKeyRef:
+                 name: mariadb-secret
+                 key: root-password
+           - name: MYSQL_DATABASE
+             value: edu_ai_db
+           volumeMounts:
+           - name: mariadb-data
+             mountPath: /var/lib/mysql
+           - name: config
+             mountPath: /etc/mysql/conf.d
+         volumes:
+         - name: mariadb-data
+           persistentVolumeClaim:
+             claimName: mariadb-pvc
+         - name: config
+           configMap:
+             name: mariadb-config
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: mariadb
+     namespace: edu-ai-system
+   spec:
+     selector:
+       app: mariadb
+     ports:
+     - port: 3306
+       clusterIP: None
+   ```
 
-```
+3. 创建数据库密码Secret
+
+   ```bash
+   kubectl create secret generic mariadb-secret --from-literal=root-password=yourpassword -n edu-ai-system
+   ```
+
+4. 应用配置
+
+   ```bash
+   kubectl apply -f mariadb-configmap.yaml
+   kubectl apply -f mariadb-deployment.yaml
+   ```
+
 #### 4.2.4 部署Redis
-```plaintext
+
+```yaml
 # redis-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -987,166 +1042,184 @@ spec:
   ports:
   - port: 6379
 ```
+
 应用配置:
-```plaintext
+
+```bash
 kubectl apply -f redis-deployment.yaml
-
 ```
+
 #### 4.2.5 部署后端服务
+
 1. 构建后端镜像并推送到镜像仓库
-    ```plaintext
-# backend/Dockerfile
-FROM python:3.10-slim
 
-WORKDIR /app
+   ```Dockerfile
+   # backend/Dockerfile
+   FROM python:3.10-slim
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+   WORKDIR /app
 
-COPY backend /app/backend
+   COPY requirements.txt .
+   RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+   COPY backend /app/backend
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-    ```plaintext
-# 构建镜像
-docker build -t your-registry/edu-ai-backend:latest ./backend
+   EXPOSE 8000
 
-# 推送到镜像仓库
-docker push your-registry/edu-ai-backend:latest
-```
+   CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+   ```
+
+   ```bash
+   # 构建镜像
+   docker build -t your-registry/edu-ai-backend:latest ./backend
+
+   # 推送到镜像仓库
+   docker push your-registry/edu-ai-backend:latest
+   ```
+
 2. 创建后端部署配置
-    ```plaintext
-# backend-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: backend
-  namespace: edu-ai-system
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: backend
-  template:
-    metadata:
-      labels:
-        app: backend
-    spec:
-      containers:
-      - name: backend
-        image: your-registry/edu-ai-backend:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DATABASE_URL
-          value: "mysql+pymysql://root:$(DB_ROOT_PASSWORD)@mariadb:3306/edu_ai_db"
-        - name: CELERY_BROKER_URL
-          value: "redis://redis:6379/0"
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: backend-secret
-              key: secret-key
-        volumeMounts:
-        - name: nas-models
-          mountPath: /mnt/nas/models
-      volumes:
-      - name: nas-models
-        persistentVolumeClaim:
-          claimName: nas-models-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-  namespace: edu-ai-system
-spec:
-  selector:
-    app: backend
-  ports:
-  - port: 8000
-```
+
+   ```yaml
+   # backend-deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: backend
+     namespace: edu-ai-system
+   spec:
+     replicas: 2
+     selector:
+       matchLabels:
+         app: backend
+     template:
+       metadata:
+         labels:
+           app: backend
+       spec:
+         containers:
+         - name: backend
+           image: your-registry/edu-ai-backend:latest
+           ports:
+           - containerPort: 8000
+           env:
+           - name: DATABASE_URL
+             value: "mysql+pymysql://root:$(DB_ROOT_PASSWORD)@mariadb:3306/edu_ai_db"
+           - name: CELERY_BROKER_URL
+             value: "redis://redis:6379/0"
+           - name: SECRET_KEY
+             valueFrom:
+               secretKeyRef:
+                 name: backend-secret
+                 key: secret-key
+           volumeMounts:
+           - name: nas-models
+             mountPath: /mnt/nas/models
+         volumes:
+         - name: nas-models
+           persistentVolumeClaim:
+             claimName: nas-models-pvc
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: backend-service
+     namespace: edu-ai-system
+   spec:
+     selector:
+       app: backend
+     ports:
+     - port: 8000
+   ```
+
 3. 创建后端Secret
-    ```plaintext
-kubectl create secret generic backend-secret --from-literal=secret-key=your-secret-key -n edu-ai-system
-kubectl create secret generic backend-secret --from-literal=DB_ROOT_PASSWORD=yourpassword -n edu-ai-system
 
-```
+   ```bash
+   kubectl create secret generic backend-secret --from-literal=secret-key=your-secret-key -n edu-ai-system
+   kubectl create secret generic backend-secret --from-literal=DB_ROOT_PASSWORD=yourpassword -n edu-ai-system
+   ```
+
 4. 应用配置
-    ```plaintext
-kubectl apply -f backend-deployment.yaml
 
-```
+   ```bash
+   kubectl apply -f backend-deployment.yaml
+   ```
+
 #### 4.2.6 部署前端服务
+
 1. 构建前端镜像并推送到镜像仓库
-    ```plaintext
-# frontend/Dockerfile
-FROM node:16-alpine AS builder
 
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+   ```Dockerfile
+   # frontend/Dockerfile
+   FROM node:16-alpine AS builder
 
-COPY . .
-RUN npm run build
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm ci
 
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-    ```plaintext
-# 构建镜像
-docker build -t your-registry/edu-ai-frontend:latest ./frontend
+   COPY . .
+   RUN npm run build
 
-# 推送到镜像仓库
-docker push your-registry/edu-ai-frontend:latest
-```
+   FROM nginx:alpine
+   COPY --from=builder /app/dist /usr/share/nginx/html
+   COPY nginx.conf /etc/nginx/conf.d/default.conf
+   EXPOSE 80
+   CMD ["nginx", "-g", "daemon off;"]
+   ```
+
+   ```bash
+   # 构建镜像
+   docker build -t your-registry/edu-ai-frontend:latest ./frontend
+
+   # 推送到镜像仓库
+   docker push your-registry/edu-ai-frontend:latest
+   ```
+
 2. 创建前端部署配置
-    ```plaintext
-# frontend-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend
-  namespace: edu-ai-system
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend
-    spec:
-      containers:
-      - name: frontend
-        image: your-registry/edu-ai-frontend:latest
-        ports:
-        - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-  namespace: edu-ai-system
-spec:
-  selector:
-    app: frontend
-  ports:
-  - port: 80
-```
-3. 应用配置
-    ```plaintext
-kubectl apply -f frontend-deployment.yaml
 
-```
+   ```yaml
+   # frontend-deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: frontend
+     namespace: edu-ai-system
+   spec:
+     replicas: 2
+     selector:
+       matchLabels:
+         app: frontend
+     template:
+       metadata:
+         labels:
+           app: frontend
+       spec:
+         containers:
+         - name: frontend
+           image: your-registry/edu-ai-frontend:latest
+           ports:
+           - containerPort: 80
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: frontend-service
+     namespace: edu-ai-system
+   spec:
+     selector:
+       app: frontend
+     ports:
+     - port: 80
+   ```
+
+3. 应用配置
+
+   ```bash
+   kubectl apply -f frontend-deployment.yaml
+   ```
+
 #### 4.2.7 部署Ingress
-```plaintext
+
+```yaml
 # ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -1180,13 +1253,16 @@ spec:
             port:
               number: 80
 ```
-应用配置:
-```plaintext
-kubectl apply -f ingress.yaml
 
+应用配置:
+
+```bash
+kubectl apply -f ingress.yaml
 ```
+
 #### 4.2.8 部署Celery Worker
-```plaintext
+
+```yaml
 # celery-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1225,13 +1301,16 @@ spec:
         persistentVolumeClaim:
           claimName: nas-models-pvc
 ```
-应用配置:
-```plaintext
-kubectl apply -f celery-deployment.yaml
 
+应用配置:
+
+```bash
+kubectl apply -f celery-deployment.yaml
 ```
+
 #### 4.2.9 初始化数据库
-```plaintext
+
+```bash
 # 在后端Pod中运行数据库迁移
 kubectl exec -it deployment/backend -n edu-ai-system -- alembic upgrade head
 
@@ -1247,93 +1326,61 @@ db.commit()
 print('管理员用户已创建')
 "
 ```
+
 #### 4.2.10 验证部署
+
 1. 检查Pod状态
-    ```plaintext
-kubectl get pods -n edu-ai-system
 
-```
+   ```bash
+   kubectl get pods -n edu-ai-system
+   ```
+
 2. 检查服务状态
-    ```plaintext
-kubectl get svc -n edu-ai-system
 
-```
+   ```bash
+   kubectl get svc -n edu-ai-system
+   ```
+
 3. 检查Ingress状态
-    ```plaintext
-kubectl get ingress -n edu-ai-system
 
-```
+   ```bash
+   kubectl get ingress -n edu-ai-system
+   ```
+
 4. 访问系统
-    - 前端界面: https://ai.yourdomain.com
-    - 后端API: https://ai.yourdomain.com/api
-    - API文档: https://ai.yourdomain.com/api/docs
+   - 前端界面: https://ai.yourdomain.com
+   - 后端API: https://ai.yourdomain.com/api
+   - API文档: https://ai.yourdomain.com/api/docs
+
 ## 5. 配置说明
+
 ### 5.1 环境变量配置
+
 #### 5.1.1 后端服务环境变量
-|变量名|描述|默认值|示例|
-|-|-|-|-|
-|DATABASE_URL|数据库连接字符串|无|mysql+pymysql://root:password@mariadb:3306/edu_ai_db|
-|CELERY_BROKER_URL|Celery消息代理URL|无|redis://redis:6379/0|
-|SECRET_KEY|JWT密钥|无|your-secret-key-here|
-|NAS_MODEL_PATH|NAS模型路径|/mnt/nas/models|/mnt/nas/models|
-|LOG_LEVEL|日志级别|INFO|DEBUG|
-|MAX_CONTENT_LENGTH|最大请求内容长度|10485760|20971520|
 
-            变量名
-            描述
-            默认值
-            示例
-            DATABASE_URL
-            数据库连接字符串
-            无
-            mysql+pymysql://root:password@mariadb:3306/edu_ai_db
-            CELERY_BROKER_URL
-            Celery消息代理URL
-            无
-            redis://redis:6379/0
-            SECRET_KEY
-            JWT密钥
-            无
-            your-secret-key-here
-            NAS_MODEL_PATH
-            NAS模型路径
-            /mnt/nas/models
-            /mnt/nas/models
-            LOG_LEVEL
-            日志级别
-            INFO
-            DEBUG
-            MAX_CONTENT_LENGTH
-            最大请求内容长度
-            10485760
-            20971520
+| 变量名 | 描述 | 默认值 | 示例 |
+|--------|------|--------|------|
+| DATABASE_URL | 数据库连接字符串 | 无 | mysql+pymysql://root:password@mariadb:3306/edu_ai_db |
+| CELERY_BROKER_URL | Celery消息代理URL | 无 | redis://redis:6379/0 |
+| SECRET_KEY | JWT密钥 | 无 | your-secret-key-here |
+| NAS_MODEL_PATH | NAS模型路径 | /mnt/nas/models | /mnt/nas/models |
+| LOG_LEVEL | 日志级别 | INFO | DEBUG |
+| MAX_CONTENT_LENGTH | 最大请求内容长度 | 10485760 | 20971520 |
+
 #### 5.1.2 前端服务环境变量
-|变量名|描述|默认值|示例|
-|-|-|-|-|
-|VITE_API_BASE_URL|API基础URL|/api|https://api.example.com|
-|VITE_APP_TITLE|应用标题|教育AI题库系统|我的题库系统|
-|VITE_APP_VERSION|应用版本|2.1.0|2.1.0|
 
-            变量名
-            描述
-            默认值
-            示例
-            VITE_API_BASE_URL
-            API基础URL
-            /api
-            https://api.example.com
-            VITE_APP_TITLE
-            应用标题
-            教育AI题库系统
-            我的题库系统
-            VITE_APP_VERSION
-            应用版本
-            2.1.0
-            2.1.0
+| 变量名 | 描述 | 默认值 | 示例 |
+|--------|------|--------|------|
+| VITE_API_BASE_URL | API基础URL | /api | https://api.example.com |
+| VITE_APP_TITLE | 应用标题 | 教育AI题库系统 | 我的题库系统 |
+| VITE_APP_VERSION | 应用版本 | 2.1.0 | 2.1.0 |
+
 ### 5.2 数据库配置
+
 #### 5.2.1 连接池配置
-```plaintext
-# 后端/database.py
+
+```python
+# backend/database.py
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -1350,8 +1397,10 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 ```
+
 #### 5.2.2 索引优化
-```plaintext
+
+```sql
 -- 用户表索引
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_role ON users(role);
@@ -1366,9 +1415,12 @@ CREATE INDEX idx_homework_assignments_homework_id ON homework_assignments(homewo
 CREATE INDEX idx_homework_assignments_student_id ON homework_assignments(student_id);
 CREATE INDEX idx_homework_assignments_status ON homework_assignments(status);
 ```
+
 ### 5.3 Redis配置
+
 #### 5.3.1 连接配置
-```plaintext
+
+```python
 # backend/celery_worker.py
 from celery import Celery
 
@@ -1386,8 +1438,10 @@ app.conf.accept_content = ['json']
 app.conf.result_serializer = 'json'
 app.conf.timezone = 'Asia/Shanghai'
 ```
+
 #### 5.3.2 持久化配置
-```plaintext
+
+```yaml
 # redis-persistent.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -1414,9 +1468,12 @@ spec:
     requests:
       storage: 5Gi
 ```
+
 ### 5.4 AI模型配置
+
 #### 5.4.1 模型路径配置
-```plaintext
+
+```python
 # backend/celery_worker.py
 import os
 
@@ -1429,8 +1486,10 @@ SUPPORTED_MODELS = {
     'code-llama': f'{MODEL_PATH}/code-llama'
 }
 ```
+
 #### 5.4.2 模型加载配置
-```plaintext
+
+```python
 # backend/celery_worker.py
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
@@ -1457,674 +1516,794 @@ def load_model(model_name):
     
     return MODEL_CACHE[model_name]
 ```
+
 ## 6. 监控与日志
+
 ### 6.1 服务监控
+
 1. 部署Prometheus和Grafana
-    ```plaintext
-# 创建监控命名空间
-kubectl create namespace monitoring
 
-# 部署Prometheus
-helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
-```
+   ```bash
+   # 创建监控命名空间
+   kubectl create namespace monitoring
+
+   # 部署Prometheus
+   helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
+   ```
+
 2. 配置服务监控
-    ```plaintext
-# backend-monitor.yaml
-apiVersion: v1
-kind: ServiceMonitor
-metadata:
-  name: backend-monitor
-  namespace: monitoring
-  labels:
-    app: backend
-spec:
-  selector:
-    matchLabels:
-      app: backend
-  endpoints:
-  - port: metrics
-    interval: 15s
-```
+
+   ```yaml
+   # backend-monitor.yaml
+   apiVersion: v1
+   kind: ServiceMonitor
+   metadata:
+     name: backend-monitor
+     namespace: monitoring
+     labels:
+       app: backend
+   spec:
+     selector:
+       matchLabels:
+         app: backend
+     endpoints:
+     - port: metrics
+       interval: 15s
+   ```
+
 ### 6.2 日志收集
+
 1. 部署EFK Stack
-    ```plaintext
-# 创建日志命名空间
-kubectl create namespace logging
 
-# 部署Elasticsearch
-helm install elasticsearch elastic/elasticsearch -n logging
+   ```bash
+   # 创建日志命名空间
+   kubectl create namespace logging
 
-# 部署Kibana
-helm install kibana elastic/kibana -n logging
+   # 部署Elasticsearch
+   helm install elasticsearch elastic/elasticsearch -n logging
 
-# 部署Fluentd
-helm install fluentd fluent/fluentd -n logging
-```
+   # 部署Kibana
+   helm install kibana elastic/kibana -n logging
+
+   # 部署Fluentd
+   helm install fluentd fluent/fluentd -n logging
+   ```
+
 2. 配置日志格式
-    ```plaintext
-# backend/main.py
-import logging
-import sys
-from pydantic import BaseModel
 
-# 日志配置
-logging.basicConfig(
-    level=logging.INFO,
-    format='{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
-)
+   ```python
+   # backend/main.py
+   import logging
+   import sys
+   from pydantic import BaseModel
 
-logger = logging.getLogger(__name__)
+   # 日志配置
+   logging.basicConfig(
+       level=logging.INFO,
+       format='{"time": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}',
+       handlers=[
+           logging.StreamHandler(sys.stdout)
+       ]
+   )
 
-# 记录请求日志
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    logger.info(
-        f"method={request.method} path={request.url.path} "
-        f"status_code={response.status_code} process_time={process_time:.4f}"
-    )
-    return response
-```
+   logger = logging.getLogger(__name__)
+
+   # 记录请求日志
+   @app.middleware("http")
+   async def log_requests(request: Request, call_next):
+       start_time = time.time()
+       response = await call_next(request)
+       process_time = time.time() - start_time
+       logger.info(
+           f"method={request.method} path={request.url.path} "
+           f"status_code={response.status_code} process_time={process_time:.4f}"
+       )
+       return response
+   ```
+
 ## 7. 备份与恢复
+
 ### 7.1 数据库备份
+
 1. 创建备份脚本
-    ```plaintext
-# backup-db.sh
-#!/bin/bash
 
-# 配置变量
-DB_HOST="mariadb"
-DB_USER="root"
-DB_PASS="yourpassword"
-DB_NAME="edu_ai_db"
-BACKUP_DIR="/mnt/nas/backups"
-DATE=$(date +%Y%m%d_%H%M%S)
+   ```bash
+   #!/bin/bash
 
-# 创建备份目录
-mkdir -p $BACKUP_DIR
+   # 配置变量
+   DB_HOST="mariadb"
+   DB_USER="root"
+   DB_PASS="yourpassword"
+   DB_NAME="edu_ai_db"
+   BACKUP_DIR="/mnt/nas/backups"
+   DATE=$(date +%Y%m%d_%H%M%S)
 
-# 执行备份
-mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME | gzip > $BACKUP_DIR/edu_ai_db_$DATE.sql.gz
+   # 创建备份目录
+   mkdir -p $BACKUP_DIR
 
-# 保留最近7天的备份
-find $BACKUP_DIR -name "edu_ai_db_*.sql.gz" -mtime +7 -delete
+   # 执行备份
+   mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME | gzip > $BACKUP_DIR/edu_ai_db_$DATE.sql.gz
 
-echo "数据库备份完成: $BACKUP_DIR/edu_ai_db_$DATE.sql.gz"
-```
+   # 保留最近7天的备份
+   find $BACKUP_DIR -name "edu_ai_db_*.sql.gz" -mtime +7 -delete
+
+   echo "数据库备份完成: $BACKUP_DIR/edu_ai_db_$DATE.sql.gz"
+   ```
+
 2. 创建定时任务
-    ```plaintext
-# 编辑crontab
-crontab -e
 
-# 添加定时任务，每天凌晨2点执行备份
-0 2 * * * /path/to/backup-db.sh >> /var/log/db-backup.log 2>&1
-```
+   ```bash
+   # 编辑crontab
+   crontab -e
+
+   # 添加定时任务，每天凌晨2点执行备份
+   0 2 * * * /path/to/backup-db.sh >> /var/log/db-backup.log 2>&1
+   ```
+
 ### 7.2 数据库恢复
+
 1. 创建恢复脚本
-    ```plaintext
-# restore-db.sh
-#!/bin/bash
 
-# 配置变量
-DB_HOST="mariadb"
-DB_USER="root"
-DB_PASS="yourpassword"
-DB_NAME="edu_ai_db"
-BACKUP_FILE=$1
+   ```bash
+   #!/bin/bash
 
-# 检查备份文件
-if [ -z "$BACKUP_FILE" ]; then
-    echo "请指定备份文件路径"
-    exit 1
-fi
+   # 配置变量
+   DB_HOST="mariadb"
+   DB_USER="root"
+   DB_PASS="yourpassword"
+   DB_NAME="edu_ai_db"
+   BACKUP_FILE=$1
 
-if [ ! -f "$BACKUP_FILE" ]; then
-    echo "备份文件不存在: $BACKUP_FILE"
-    exit 1
-fi
+   # 检查备份文件
+   if [ -z "$BACKUP_FILE" ]; then
+       echo "请指定备份文件路径"
+       exit 1
+   fi
 
-# 执行恢复
-gunzip < $BACKUP_FILE | mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME
+   if [ ! -f "$BACKUP_FILE" ]; then
+       echo "备份文件不存在: $BACKUP_FILE"
+       exit 1
+   fi
 
-echo "数据库恢复完成: $BACKUP_FILE"
-```
+   # 执行恢复
+   gunzip < $BACKUP_FILE | mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME
+
+   echo "数据库恢复完成: $BACKUP_FILE"
+   ```
+
 2. 执行恢复
-    ```plaintext
-# 恢复最新备份
-./restore-db.sh /mnt/nas/backups/edu_ai_db_20231001_020000.sql.gz
 
-# 恢复指定备份
-./restore-db.sh /mnt/nas/backups/edu_ai_db_20231001_020000.sql.gz
-```
+   ```bash
+   # 恢复最新备份
+   ./restore-db.sh /mnt/nas/backups/edu_ai_db_20231001_020000.sql.gz
+
+   # 恢复指定备份
+   ./restore-db.sh /mnt/nas/backups/edu_ai_db_20231001_020000.sql.gz
+   ```
+
 ### 7.3 模型文件备份
+
 1. 使用rsync同步模型文件
-    ```plaintext
-# backup-models.sh
-#!/bin/bash
 
-# 配置变量
-MODEL_DIR="/mnt/nas/models"
-BACKUP_DIR="/mnt/nas/backups/models"
+   ```bash
+   #!/bin/bash
 
-# 创建备份目录
-mkdir -p $BACKUP_DIR
+   # 配置变量
+   MODEL_DIR="/mnt/nas/models"
+   BACKUP_DIR="/mnt/nas/backups/models"
 
-# 同步模型文件
-rsync -av --delete $MODEL_DIR/ $BACKUP_DIR/
+   # 创建备份目录
+   mkdir -p $BACKUP_DIR
 
-echo "模型文件备份完成: $BACKUP_DIR"
-```
+   # 同步模型文件
+   rsync -av --delete $MODEL_DIR/ $BACKUP_DIR/
+
+   echo "模型文件备份完成: $BACKUP_DIR"
+   ```
+
 2. 创建定时任务
-    ```plaintext
-# 编辑crontab
-crontab -e
 
-# 添加定时任务，每周日凌晨1点执行备份
-0 1 * * 0 /path/to/backup-models.sh >> /var/log/models-backup.log 2>&1
-```
+   ```bash
+   # 编辑crontab
+   crontab -e
+
+   # 添加定时任务，每周日凌晨1点执行备份
+   0 1 * * 0 /path/to/backup-models.sh >> /var/log/models-backup.log 2>&1
+   ```
+
 ## 8. 故障排查
+
 ### 8.1 常见问题及解决方案
+
 #### 8.1.1 服务无法启动
-问题: 后端服务启动失败，报错"数据库连接失败"解决方案:
+
+问题: 后端服务启动失败，报错"数据库连接失败"
+
+解决方案:
+
 1. 检查数据库服务状态
-    ```plaintext
-kubectl get pods -n edu-ai-system | grep mariadb
 
-```
+   ```bash
+   kubectl get pods -n edu-ai-system | grep mariadb
+   ```
+
 2. 检查数据库服务日志
-    ```plaintext
-kubectl logs -f deployment/mariadb -n edu-ai-system
 
-```
+   ```bash
+   kubectl logs -f deployment/mariadb -n edu-ai-system
+   ```
+
 3. 检查数据库连接配置
-    ```plaintext
-kubectl get secret backend-secret -n edu-ai-system -o yaml
 
-```
+   ```bash
+   kubectl get secret backend-secret -n edu-ai-system -o yaml
+   ```
+
 4. 重新部署后端服务
-    ```plaintext
-kubectl rollout restart deployment/backend -n edu-ai-system
 
-```
+   ```bash
+   kubectl rollout restart deployment/backend -n edu-ai-system
+   ```
+
 #### 8.1.2 AI批改任务失败
-问题: AI批改任务一直处于"pending"状态解决方案:
+
+问题: AI批改任务一直处于"pending"状态
+
+解决方案:
+
 1. 检查Celery Worker状态
-    ```plaintext
-kubectl get pods -n edu-ai-system | grep celery
 
-```
+   ```bash
+   kubectl get pods -n edu-ai-system | grep celery
+   ```
+
 2. 检查Celery Worker日志
-    ```plaintext
-kubectl logs -f deployment/celery-worker -n edu-ai-system
 
-```
+   ```bash
+   kubectl logs -f deployment/celery-worker -n edu-ai-system
+   ```
+
 3. 检查Redis服务状态
-    ```plaintext
-kubectl get pods -n edu-ai-system | grep redis
 
-```
+   ```bash
+   kubectl get pods -n edu-ai-system | grep redis
+   ```
+
 4. 检查Redis连接配置
-    ```plaintext
-kubectl exec -it deployment/backend -n edu-ai-system -- env | grep CELERY
-```
+
+   ```bash
+   kubectl exec -it deployment/backend -n edu-ai-system -- env | grep CELERY
+   ```
+
 5. 重启Celery Worker
-    ```plaintext
-kubectl rollout restart deployment/celery-worker -n edu-ai-system
 
-```
+   ```bash
+   kubectl rollout restart deployment/celery-worker -n edu-ai-system
+   ```
+
 #### 8.1.3 前端无法访问后端API
-问题: 前端页面报错"Network Error"解决方案:
+
+问题: 前端页面报错"Network Error"
+
+解决方案:
+
 1. 检查后端服务状态
-    ```plaintext
-kubectl get pods -n edu-ai-system | grep backend
 
-```
+   ```bash
+   kubectl get pods -n edu-ai-system | grep backend
+   ```
+
 2. 检查后端服务日志
-    ```plaintext
-kubectl logs -f deployment/backend -n edu-ai-system
 
-```
+   ```bash
+   kubectl logs -f deployment/backend -n edu-ai-system
+   ```
+
 3. 检查服务配置
-    ```plaintext
-kubectl get svc -n edu-ai-system
 
-```
+   ```bash
+   kubectl get svc -n edu-ai-system
+   ```
+
 4. 检查Ingress配置
-    ```plaintext
-kubectl get ingress -n edu-ai-system
 
-```
+   ```bash
+   kubectl get ingress -n edu-ai-system
+   ```
+
 5. 检查CORS配置
-    ```plaintext
-kubectl exec -it deployment/backend -n edu-ai-system -- cat /app/backend/main.py | grep -A 10 CORSMiddleware
-```
+
+   ```bash
+   kubectl exec -it deployment/backend -n edu-ai-system -- cat /app/backend/main.py | grep -A 10 CORSMiddleware
+   ```
+
 ### 8.2 日志分析
+
 1. 收集所有服务日志
-    ```plaintext
-mkdir -p /tmp/edu-ai-logs
 
-# 收集后端日志
-kubectl logs deployment/backend -n edu-ai-system > /tmp/edu-ai-logs/backend.log
+   ```bash
+   mkdir -p /tmp/edu-ai-logs
 
-# 收集前端日志
-kubectl logs deployment/frontend -n edu-ai-system > /tmp/edu-ai-logs/frontend.log
+   # 收集后端日志
+   kubectl logs deployment/backend -n edu-ai-system > /tmp/edu-ai-logs/backend.log
 
-# 收集Celery日志
-kubectl logs deployment/celery-worker -n edu-ai-system > /tmp/edu-ai-logs/celery.log
+   # 收集前端日志
+   kubectl logs deployment/frontend -n edu-ai-system > /tmp/edu-ai-logs/frontend.log
 
-# 收集数据库日志
-kubectl logs deployment/mariadb -n edu-ai-system > /tmp/edu-ai-logs/mariadb.log
+   # 收集Celery日志
+   kubectl logs deployment/celery-worker -n edu-ai-system > /tmp/edu-ai-logs/celery.log
 
-# 收集Redis日志
-kubectl logs deployment/redis -n edu-ai-system > /tmp/edu-ai-logs/redis.log
-```
+   # 收集数据库日志
+   kubectl logs deployment/mariadb -n edu-ai-system > /tmp/edu-ai-logs/mariadb.log
+
+   # 收集Redis日志
+   kubectl logs deployment/redis -n edu-ai-system > /tmp/edu-ai-logs/redis.log
+   ```
+
 2. 分析错误日志
-    ```plaintext
-# 查看后端错误日志
-grep -i "error\|exception\|failed" /tmp/edu-ai-logs/backend.log
 
-# 查看前端错误日志
-grep -i "error\|failed" /tmp/edu-ai-logs/frontend.log
+   ```bash
+   # 查看后端错误日志
+   grep -i "error\|exception\|failed" /tmp/edu-ai-logs/backend.log
 
-# 查看Celery错误日志
-grep -i "error\|exception\|failed" /tmp/edu-ai-logs/celery.log
-```
+   # 查看前端错误日志
+   grep -i "error\|failed" /tmp/edu-ai-logs/frontend.log
+
+   # 查看Celery错误日志
+   grep -i "error\|exception\|failed" /tmp/edu-ai-logs/celery.log
+   ```
+
 ## 9. 性能优化
+
 ### 9.1 数据库优化
+
 1. 增加连接池大小
-    ```plaintext
-# backend/database.py
-engine = create_engine(
-    DATABASE_URL,
-    pool_size=20,         # 连接池大小
-    max_overflow=30,      # 最大溢出连接数
-    pool_recycle=3600,    # 连接回收时间(秒)
-    pool_pre_ping=True    # 每次连接前ping一下
-)
-```
+
+   ```python
+   # backend/database.py
+   engine = create_engine(
+       DATABASE_URL,
+       pool_size=20,         # 连接池大小
+       max_overflow=30,      # 最大溢出连接数
+       pool_recycle=3600,    # 连接回收时间(秒)
+       pool_pre_ping=True    # 每次连接前ping一下
+   )
+   ```
+
 2. 添加读写分离
-    ```plaintext
-# backend/database.py
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-# 主库(写)
-master_engine = create_engine("mysql+pymysql://root:password@master-db:3306/edu_ai_db")
+   ```python
+   # backend/database.py
+   from sqlalchemy import create_engine
+   from sqlalchemy.orm import sessionmaker
 
-# 从库(读)
-slave_engine = create_engine("mysql+pymysql://root:password@slave-db:3306/edu_ai_db")
+   # 主库(写)
+   master_engine = create_engine("mysql+pymysql://root:password@master-db:3306/edu_ai_db")
 
-# 会话工厂
-MasterSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=master_engine)
-SlaveSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=slave_engine)
+   # 从库(读)
+   slave_engine = create_engine("mysql+pymysql://root:password@slave-db:3306/edu_ai_db")
 
-# 获取数据库会话
-def get_db():
-    db = SlaveSessionLocal()  # 默认使用从库
-    try:
-        yield db
-    finally:
-        db.close()
+   # 会话工厂
+   MasterSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=master_engine)
+   SlaveSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=slave_engine)
 
-def get_write_db():
-    db = MasterSessionLocal()  # 写操作使用主库
-    try:
-        yield db
-    finally:
-        db.close()
-```
+   # 获取数据库会话
+   def get_db():
+       db = SlaveSessionLocal()  # 默认使用从库
+       try:
+           yield db
+       finally:
+           db.close()
+
+   def get_write_db():
+       db = MasterSessionLocal()  # 写操作使用主库
+       try:
+           yield db
+       finally:
+           db.close()
+   ```
+
 ### 9.2 缓存优化
+
 1. 使用Redis缓存常用数据
-    ```plaintext
-# backend/utils/cache.py
-import redis
-import json
-import pickle
-from functools import wraps
 
-# Redis连接
-redis_client = redis.Redis(host='redis', port=6379, db=0)
+   ```python
+   # backend/utils/cache.py
+   import redis
+   import json
+   import pickle
+   from functools import wraps
 
-# 缓存装饰器
-def cache(expire=3600):
-    def decorator(func):
-@wraps(func)
-        def wrapper(*args, **kwargs):
-            # 生成缓存键
-            key = f"{func.__name__}:{str(args)}:{str(kwargs)}"
-            
-            # 尝试从缓存获取
-            cached = redis_client.get(key)
-            if cached:
-                try:
-                    return pickle.loads(cached)
-                except:
-                    pass
-            
-            # 执行函数
-            result = func(*args, **kwargs)
-            
-            # 存入缓存
-            redis_client.setex(key, expire, pickle.dumps(result))
-            
-            return result
-        return wrapper
-    return decorator
+   # Redis连接
+   redis_client = redis.Redis(host='redis', port=6379, db=0)
 
-# 使用示例
-@cache(expire=1800)# 缓存30分钟
-def get_questions(subject_id=None):
-    # 查询数据库
-    # ...
-    return questions
-```
+   # 缓存装饰器
+   def cache(expire=3600):
+       def decorator(func):
+           @wraps(func)
+           def wrapper(*args, **kwargs):
+               # 生成缓存键
+               key = f"{func.__name__}:{str(args)}:{str(kwargs)}"
+               
+               # 尝试从缓存获取
+               cached = redis_client.get(key)
+               if cached:
+                   try:
+                       return pickle.loads(cached)
+                   except:
+                       pass
+               
+               # 执行函数
+               result = func(*args, **kwargs)
+               
+               # 存入缓存
+               redis_client.setex(key, expire, pickle.dumps(result))
+               
+               return result
+           return wrapper
+       return decorator
+
+   # 使用示例
+   @cache(expire=1800)  # 缓存30分钟
+   def get_questions(subject_id=None):
+       # 查询数据库
+       # ...
+       return questions
+   ```
+
 2. 缓存AI模型
-    ```plaintext
-# backend/celery_worker.py
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# 全局模型缓存
-MODEL_CACHE = {}
+   ```python
+   # backend/celery_worker.py
+   import torch
+   from transformers import AutoModelForCausalLM, AutoTokenizer
 
-def load_model(model_name):
-    if model_name not in MODEL_CACHE:
-        model_path = SUPPORTED_MODELS.get(model_name)
-        if not model_path:
-            raise ValueError(f"Unsupported model: {model_name}")
-        
-        # 设备配置
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        
-        # 加载模型和tokenizer
-        tokenizer = AutoTokenizer.from_pretrained(model_path)
-        model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map='auto'
-        )
-        
-        # 存入缓存
-        MODEL_CACHE[model_name] = {
-            'tokenizer': tokenizer,
-            'model': model,
-            'device': device
-        }
-    
-    return MODEL_CACHE[model_name]
-```
+   # 全局模型缓存
+   MODEL_CACHE = {}
+
+   def load_model(model_name):
+       if model_name not in MODEL_CACHE:
+           model_path = SUPPORTED_MODELS.get(model_name)
+           if not model_path:
+               raise ValueError(f"Unsupported model: {model_name}")
+           
+           # 设备配置
+           device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+           
+           # 加载模型和tokenizer
+           tokenizer = AutoTokenizer.from_pretrained(model_path)
+           model = AutoModelForCausalLM.from_pretrained(
+               model_path,
+               torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+               device_map='auto'
+           )
+           
+           # 存入缓存
+           MODEL_CACHE[model_name] = {
+               'tokenizer': tokenizer,
+               'model': model,
+               'device': device
+           }
+       
+       return MODEL_CACHE[model_name]
+   ```
+
 ### 9.3 前端优化
+
 1. 启用Gzip压缩
-    ```plaintext
-# nginx.conf
-gzip on;
-gzip_vary on;
-gzip_min_length 1024;
-gzip_proxied any;
-gzip_comp_level 6;
-gzip_types
-    text/plain
-    text/css
-    text/xml
-    text/javascript
-    application/javascript
-    application/xml+rss
-    application/json;
-```
+
+   ```nginx
+   # nginx.conf
+   gzip on;
+   gzip_vary on;
+   gzip_min_length 1024;
+   gzip_proxied any;
+   gzip_comp_level 6;
+   gzip_types
+       text/plain
+       text/css
+       text/xml
+       text/javascript
+       application/javascript
+       application/xml+rss
+       application/json;
+   ```
+
 2. 启用浏览器缓存
-    ```plaintext
-# nginx.conf
-location ~* \.(jpg|jpeg|png|gif|ico|css|js|pdf|txt)$ {
-    expires 7d;
-    add_header Cache-Control "public, no-transform";
-}
-```
+
+   ```nginx
+   # nginx.conf
+   location ~* \.(jpg|jpeg|png|gif|ico|css|js|pdf|txt)$ {
+       expires 7d;
+       add_header Cache-Control "public, no-transform";
+   }
+   ```
+
 3. 使用CDN加速静态资源
-    ```plaintext
-<!-- index.html -->
-<link rel="stylesheet" href="https://cdn.example.com/css/app.css">
-<script src="https://cdn.example.com/js/app.js"></script>
-```
+
+   ```html
+   <!-- index.html -->
+   <link rel="stylesheet" href="https://cdn.example.com/css/app.css">
+   <script src="https://cdn.example.com/js/app.js"></script>
+   ```
+
 ## 10. 安全加固
+
 ### 10.1 网络安全
+
 1. 配置网络策略
-    ```plaintext
-# network-policy.yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: edu-ai-network-policy
-  namespace: edu-ai-system
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: edu-ai-system
-  egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          name: edu-ai-system
-    - to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
-        ports:
-        - protocol: TCP
-          port: 443
-        - protocol: TCP
-          port: 80
-```
+
+   ```yaml
+   # network-policy.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: NetworkPolicy
+   metadata:
+     name: edu-ai-network-policy
+     namespace: edu-ai-system
+   spec:
+     podSelector: {}
+     policyTypes:
+     - Ingress
+     - Egress
+     ingress:
+     - from:
+       - namespaceSelector:
+           matchLabels:
+             name: edu-ai-system
+     egress:
+     - to:
+       - namespaceSelector:
+           matchLabels:
+             name: edu-ai-system
+     - to:
+       - ipBlock:
+           cidr: 0.0.0.0/0
+         ports:
+         - protocol: TCP
+           port: 443
+         - protocol: TCP
+           port: 80
+   ```
+
 2. 启用TLS加密
-    ```plaintext
-# tls-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: edu-ai-tls
-  namespace: edu-ai-system
-type: kubernetes.io/tls
-data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...
-  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t...
-```
+
+   ```yaml
+   # tls-secret.yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: edu-ai-tls
+     namespace: edu-ai-system
+   type: kubernetes.io/tls
+   data:
+     tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...
+     tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t...
+   ```
+
 ### 10.2 应用安全
+
 1. 配置安全头
-    ```plaintext
-# nginx.conf
-add_header X-Frame-Options "SAMEORIGIN" always;
-add_header X-Content-Type-Options "nosniff" always;
-add_header X-XSS-Protection "1; mode=block" always;
-add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" always;
-```
+
+   ```nginx
+   # nginx.conf
+   add_header X-Frame-Options "SAMEORIGIN" always;
+   add_header X-Content-Type-Options "nosniff" always;
+   add_header X-XSS-Protection "1; mode=block" always;
+   add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+   add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" always;
+   ```
+
 2. 限制API请求频率
-    ```plaintext
-# rate-limit.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: edu-ai-ingress
-  namespace: edu-ai-system
-  annotations:
-    nginx.ingress.kubernetes.io/limit-rps: "10"
-    nginx.ingress.kubernetes.io/limit-connections: "5"
-spec:
-  # ... 其他配置
-```
+
+   ```yaml
+   # rate-limit.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: Ingress
+   metadata:
+     name: edu-ai-ingress
+     namespace: edu-ai-system
+     annotations:
+       nginx.ingress.kubernetes.io/limit-rps: "10"
+       nginx.ingress.kubernetes.io/limit-connections: "5"
+   spec:
+     # ... 其他配置
+   ```
+
 3. 审计日志
-    ```plaintext
-# backend/main.py
-import logging
-import time
 
-logger = logging.getLogger(__name__)
+   ```python
+   # backend/main.py
+   import logging
+   import time
 
-@app.middleware("http")
-async def audit_log(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    
-    # 记录审计日志
-    logger.info(
-        f"audit: method={request.method} path={request.url.path} "
-        f"status_code={response.status_code} process_time={process_time:.4f} "
-        f"user_agent={request.headers.get('user-agent')} "
-        f"remote_addr={request.client.host}"
-    )
-    
-    return response
-```
+   logger = logging.getLogger(__name__)
+
+   @app.middleware("http")
+   async def audit_log(request: Request, call_next):
+       start_time = time.time()
+       response = await call_next(request)
+       process_time = time.time() - start_time
+       
+       # 记录审计日志
+       logger.info(
+           f"audit: method={request.method} path={request.url.path} "
+           f"status_code={response.status_code} process_time={process_time:.4f} "
+           f"user_agent={request.headers.get('user-agent')} "
+           f"remote_addr={request.client.host}"
+       )
+       
+       return response
+   ```
+
 ### 10.3 数据安全
+
 1. 数据库加密
-    ```plaintext
--- 创建加密表
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    -- 敏感字段加密
-    id_card VARBINARY(255) ENCRYPTED USING AES_256_CBC,
-    phone VARBINARY(20) ENCRYPTED USING AES_256_CBC,
-    -- 其他字段...
-);
-```
+
+   ```sql
+   -- 创建加密表
+   CREATE TABLE users (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       username VARCHAR(100) UNIQUE NOT NULL,
+       password_hash VARCHAR(255) NOT NULL,
+       -- 敏感字段加密
+       id_card VARBINARY(255) ENCRYPTED USING AES_256_CBC,
+       phone VARBINARY(20) ENCRYPTED USING AES_256_CBC,
+       -- 其他字段...
+   );
+   ```
+
 2. 敏感数据脱敏
-    ```plaintext
-# backend/utils/sanitizer.py
-import re
 
-def sanitize_phone(phone):
-    if not phone:
-        return phone
-    return re.sub(r'(\d{3})\d{4}(\d{4})', r'\1****\2', phone)
+   ```python
+   # backend/utils/sanitizer.py
+   import re
 
-def sanitize_id_card(id_card):
-    if not id_card:
-        return id_card
-    return re.sub(r'(\d{6})\d{8}(\d{4})', r'\1********\2', id_card)
+   def sanitize_phone(phone):
+       if not phone:
+           return phone
+       return re.sub(r'(\d{3})\d{4}(\d{4})', r'\1****\2', phone)
 
-def sanitize_email(email):
-    if not email:
-        return email
-    username, domain = email.split('@')
-    username = username[:2] + '*' * (len(username) - 2)
-    return f"{username}@{domain}"
-```
+   def sanitize_id_card(id_card):
+       if not id_card:
+           return id_card
+       return re.sub(r'(\d{6})\d{8}(\d{4})', r'\1********\2', id_card)
+
+   def sanitize_email(email):
+       if not email:
+           return email
+       username, domain = email.split('@')
+       username = username[:2] + '*' * (len(username) - 2)
+       return f"{username}@{domain}"
+   ```
+
 ## 11. 版本升级
+
 ### 11.1 升级流程
+
 1. 备份数据
-    ```plaintext
-# 备份数据库
-./backup-db.sh
 
-# 备份模型文件
-./backup-models.sh
-```
+   ```bash
+   # 备份数据库
+   ./backup-db.sh
+
+   # 备份模型文件
+   ./backup-models.sh
+   ```
+
 2. 更新代码
-    ```plaintext
-# 拉取最新代码
-git pull origin main
 
-# 更新子模块
-git submodule update --init --recursive
-```
+   ```bash
+   # 拉取最新代码
+   git pull origin main
+
+   # 更新子模块
+   git submodule update --init --recursive
+   ```
+
 3. 更新依赖
-    ```plaintext
-# 更新后端依赖
-cd backend
-pip install -r requirements.txt --upgrade
 
-# 更新前端依赖
-cd ../frontend
-npm update
-```
+   ```bash
+   # 更新后端依赖
+   cd backend
+   pip install -r requirements.txt --upgrade
+
+   # 更新前端依赖
+   cd ../frontend
+   npm update
+   ```
+
 4. 重新构建镜像
-    ```plaintext
-# 构建后端镜像
-docker build -t your-registry/edu-ai-backend:latest ./backend
-docker push your-registry/edu-ai-backend:latest
 
-# 构建前端镜像
-docker build -t your-registry/edu-ai-frontend:latest ./frontend
-docker push your-registry/edu-ai-frontend:latest
-```
+   ```bash
+   # 构建后端镜像
+   docker build -t your-registry/edu-ai-backend:latest ./backend
+   docker push your-registry/edu-ai-backend:latest
+
+   # 构建前端镜像
+   docker build -t your-registry/edu-ai-frontend:latest ./frontend
+   docker push your-registry/edu-ai-frontend:latest
+   ```
+
 5. 应用更新
-    ```plaintext
-# 更新Kubernetes部署
-kubectl set image deployment/backend backend=your-registry/edu-ai-backend:latest -n edu-ai-system
-kubectl set image deployment/frontend frontend=your-registry/edu-ai-frontend:latest -n edu-ai-system
-kubectl set image deployment/celery-worker backend=your-registry/edu-ai-backend:latest -n edu-ai-system
 
-# 检查更新状态
-kubectl rollout status deployment/backend -n edu-ai-system
-kubectl rollout status deployment/frontend -n edu-ai-system
-kubectl rollout status deployment/celery-worker -n edu-ai-system
-```
+   ```bash
+   # 更新Kubernetes部署
+   kubectl set image deployment/backend backend=your-registry/edu-ai-backend:latest -n edu-ai-system
+   kubectl set image deployment/frontend frontend=your-registry/edu-ai-frontend:latest -n edu-ai-system
+   kubectl set image deployment/celery-worker backend=your-registry/edu-ai-backend:latest -n edu-ai-system
+
+   # 检查更新状态
+   kubectl rollout status deployment/backend -n edu-ai-system
+   kubectl rollout status deployment/frontend -n edu-ai-system
+   kubectl rollout status deployment/celery-worker -n edu-ai-system
+   ```
+
 6. 数据库迁移
-    ```plaintext
-# 在后端Pod中运行迁移
-kubectl exec -it deployment/backend -n edu-ai-system -- alembic upgrade head
-```
+
+   ```bash
+   # 在后端Pod中运行迁移
+   kubectl exec -it deployment/backend -n edu-ai-system -- alembic upgrade head
+   ```
+
 7. 验证更新
-    ```plaintext
-# 检查Pod状态
-kubectl get pods -n edu-ai-system
 
-# 检查服务日志
-kubectl logs -f deployment/backend -n edu-ai-system
-kubectl logs -f deployment/frontend -n edu-ai-system
-kubectl logs -f deployment/celery-worker -n edu-ai-system
+   ```bash
+   # 检查Pod状态
+   kubectl get pods -n edu-ai-system
 
-# 访问系统验证功能
-curl https://ai.yourdomain.com/api/health
-```
+   # 检查服务日志
+   kubectl logs -f deployment/backend -n edu-ai-system
+   kubectl logs -f deployment/frontend -n edu-ai-system
+   kubectl logs -f deployment/celery-worker -n edu-ai-system
+
+   # 访问系统验证功能
+   curl https://ai.yourdomain.com/api/health
+   ```
+
 ### 11.2 回滚策略
+
 1. 准备回滚脚本
-    ```plaintext
-# rollback.sh
-#!/bin/bash
 
-# 回滚到指定版本
-VERSION=$1
+   ```bash
+   #!/bin/bash
 
-if [ -z "$VERSION" ]; then
-    echo "请指定回滚版本"
-    exit 1
-fi
+   # 回滚到指定版本
+   VERSION=$1
 
-# 回滚Kubernetes部署
-kubectl set image deployment/backend backend=your-registry/edu-ai-backend:$VERSION -n edu-ai-system
-kubectl set image deployment/frontend frontend=your-registry/edu-ai-frontend:$VERSION -n edu-ai-system
-kubectl set image deployment/celery-worker backend=your-registry/edu-ai-backend:$VERSION -n edu-ai-system
+   if [ -z "$VERSION" ]; then
+       echo "请指定回滚版本"
+       exit 1
+   fi
 
-# 检查回滚状态
-kubectl rollout status deployment/backend -n edu-ai-system
-kubectl rollout status deployment/frontend -n edu-ai-system
-kubectl rollout status deployment/celery-worker -n edu-ai-system
+   # 回滚Kubernetes部署
+   kubectl set image deployment/backend backend=your-registry/edu-ai-backend:$VERSION -n edu-ai-system
+   kubectl set image deployment/frontend frontend=your-registry/edu-ai-frontend:$VERSION -n edu-ai-system
+   kubectl set image deployment/celery-worker backend=your-registry/edu-ai-backend:$VERSION -n edu-ai-system
 
-echo "回滚完成: $VERSION"
-```
+   # 检查回滚状态
+   kubectl rollout status deployment/backend -n edu-ai-system
+   kubectl rollout status deployment/frontend -n edu-ai-system
+   kubectl rollout status deployment/celery-worker -n edu-ai-system
+
+   echo "回滚完成: $VERSION"
+   ```
+
 2. 执行回滚
-    ```plaintext
-# 回滚到上一个版本
-./rollback.sh v2.0.5
+   ```bash
+   # 回滚到上一个版本
+   ./rollback.sh v2.0.5
 
-# 回滚到指定版本
-./rollback.sh v2.0.4
-```
+   # 回滚到指定版本
+   ./rollback.sh v2.0.4
+   ```
+
 ## 12. 总结
+
 本文档详细介绍了教育AI题库与作业系统的部署流程，包括环境要求、部署步骤、配置说明、监控日志、备份恢复、故障排查、性能优化、安全加固和版本升级等内容。
+
 系统采用微服务架构，支持Docker Compose和Kubernetes两种部署方式，可以根据实际需求选择合适的部署方案。在部署过程中，需要注意网络配置、存储规划、安全加固等方面的问题，确保系统稳定可靠地运行。
+
 对于生产环境，建议使用Kubernetes进行部署，并结合CI/CD流水线实现自动化部署。同时，需要配置完善的监控、日志和备份机制，确保系统的可观测性和可靠性。
+
 如在部署过程中遇到问题，可以参考本文档的故障排查部分，或联系技术支持获取帮助。
+```
