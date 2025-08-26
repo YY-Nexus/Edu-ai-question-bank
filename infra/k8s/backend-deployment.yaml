@@ -1,0 +1,15 @@
+# backend-monitor.yaml
+   apiVersion: v1
+   kind: ServiceMonitor
+   metadata:
+     name: backend-monitor
+     namespace: monitoring
+     labels:
+       app: backend
+   spec:
+     selector:
+       matchLabels:
+         app: backend
+     endpoints:
+     - port: metrics
+       interval: 15s
