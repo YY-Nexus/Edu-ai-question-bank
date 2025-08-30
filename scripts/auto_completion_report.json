@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-08-26T03:22:43.297410",
+  "processed_files": 11,
+  "updated_docs": {
+    "docs/教育AI题库系统文档.md": {
+      "files_added": 11,
+      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md.backup_20250826_032243",
+      "categories": [
+        "scripts",
+        "other"
+      ]
+    }
+  },
+  "files_by_category": {
+    "scripts": [
+      "scripts/4.2.9 初始化数据库.sh",
+      "scripts/auto_doc_integration.py",
+      "scripts/auto_doc_completion.py",
+      "scripts/4.2.2 创建命名空间.sh",
+      "scripts/auto_completion_report.json",
+      "scripts/5.2.2 索引优化.sql",
+      "scripts/doc_parser.py",
+      "scripts/doc_analysis.json",
+      "scripts/4.1.4 停止服务.sh",
+      "scripts/repo_inventory.json"
+    ],
+    "other": [
+      ".github/workflows/auto-review.yml"
+    ]
+  }
+}

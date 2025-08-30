@@ -671,6 +671,339 @@ questions
 ```markdown
 # 教育AI题库与作业系统部署文档
 
+
+
+#### infra/k8s/rename_yaml_by_content.py
+
+YAML文件重命名工具，根据文件内容自动分类和重命名
+
+```python
+import os
+import re
+
+src_dir = './generated_yaml_sections'
+dst_dir = '../infra/k8s'
+os.makedirs(dst_dir, exist_ok=True)
+
+# 关键字与目标文件名映射
+patterns = [
+    (r'mariadb-config', 'mariadb-configmap.yaml'),
+    (r'(kind:\s*Deployment[\s\S]*name:\s*mariadb|app:\s*mariadb)', 'mariadb-deployment.yaml'),
+    (r'(kind:\s*Deployment[\s\S]*name:\s*redis|app:\s*redis)', 'redis-deployment.yaml'),
+    (r'(kind:\s*Deployment[\s\S]*name:\s*backend|app:\s*backend)', 'backend-deployment.yaml'),
+    (r'(kind:\s*Deployment[\s\S]*name:\s*frontend|app:\s*frontend)', 'frontend-deployment.yaml'),
+    (r'kind:\s*Ingress', 'ingress.yaml'),
+    (r'(kind:\s*Deployment[\s\S]*name:\s*celery-worker|app:\s*celery-worker)', 'celery-deployment.yaml'),
+    (r'redis.conf', 'redis-persistent.yaml'),
+    (r'ServiceMonitor', 'backend-monitor.yaml'),
+    (r'NetworkPolicy', 'network-policy.yaml'),
+    (r'kubernetes.io/tls', 'tls-secret.yaml'),
+    (r'limit-rps', 'rate-limit.yaml'),
+]
+
+for fname in os.listdir(src_dir):
+    if not fname.endswith('.yaml'):
+        continue
+    fpath = os.path.join(src_dir, fname)
+    with open(fpath, encoding='utf-8') as f:
+        content = f.read()
+    new_name = None
+    for pat, target in patterns:
+        if re.search(pat, content, re.IGNORECASE):
+            new_name = target
+            break
+    if not new_name:
+        new_name = f'unknown_{fname}'
+    dst_path = os.path.join(dst_dir, new_name)
+    # 如果已存在则加编号
+    base, ext = os.path.splitext(new_name)
+    i = 2
+    while os.path.exists(dst_path):
+        dst_path = os.path.join(dst_dir, f'{base}_{i}{ext}')
+        i += 1
+    os.rename(fpath, dst_path)
+    print(f'{fname} → {dst_path}')
+
+print('批量重命名完成。')
+```
+
+
+#### infra/k8s/ingress_2.yaml
+
+Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件
+
+```yaml
+# ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: edu-ai-ingress
+  namespace: edu-ai-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - ai.yourdomain.com
+    secretName: edu-ai-tls
+  rules:
+  - host: ai.yourdomain.com
+    http:
+      paths:
+      - path: /api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 8000
+      - path: /()(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+```
+
+
+#### infra/k8s/tls-secret.yaml
+
+Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件
+
+```yaml
+# tls-secret.yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: edu-ai-tls
+     namespace: edu-ai-system
+   type: kubernetes.io/tls
+   data:
+     tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...
+     tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t...
+```
+
+
+#### infra/k8s/redis-persistent.yaml
+
+Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件
+
+```yaml
+# redis-persistent.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: edu-ai-system
+data:
+  redis.conf: |
+    appendonly yes
+    appendfsync everysec
+    save 900 1
+    save 300 10
+    save 60 10000
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: edu-ai-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+```
+
+
+#### infra/k8s/network-policy.yaml
+
+Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件
+
+```yaml
+# network-policy.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: NetworkPolicy
+   metadata:
+     name: edu-ai-network-policy
+     namespace: edu-ai-system
+   spec:
+     podSelector: {}
+     policyTypes:
+     - Ingress
+     - Egress
+     ingress:
+     - from:
+       - namespaceSelector:
+           matchLabels:
+             name: edu-ai-system
+     egress:
+     - to:
+       - namespaceSelector:
+           matchLabels:
+             name: edu-ai-system
+     - to:
+       - ipBlock:
+           cidr: 0.0.0.0/0
+         ports:
+         - protocol: TCP
+           port: 443
+         - protocol: TCP
+           port: 80
+```
+
+
+#### infra/k8s/ingress.yaml
+
+Kubernetes Ingress配置，定义了外部访问路由和SSL终止
+
+```yaml
+# rate-limit.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: Ingress
+   metadata:
+     name: edu-ai-ingress
+     namespace: edu-ai-system
+     annotations:
+       nginx.ingress.kubernetes.io/limit-rps: "10"
+       nginx.ingress.kubernetes.io/limit-connections: "5"
+   spec:
+     # ... 其他配置
+```
+
+
+#### infra/k8s/mariadb-configmap_2.yaml
+
+Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件
+
+```yaml
+# mariadb-configmap.yaml
+   apiVersion: v1
+   kind: ConfigMap
+   metadata:
+     name: mariadb-config
+     namespace: edu-ai-system
+   data:
+     my.cnf: |
+       [mysqld]
+       character-set-server=utf8mb4
+       collation-server=utf8mb4_unicode_ci
+       max_allowed_packet=256M
+```
+
+
+#### infra/k8s/mariadb-configmap.yaml
+
+MariaDB数据库配置映射，包含数据库初始化和配置参数
+
+```yaml
+# mariadb-deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: mariadb
+     namespace: edu-ai-system
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: mariadb
+     template:
+       metadata:
+         labels:
+           app: mariadb
+       spec:
+         containers:
+         - name: mariadb
+           image: mariadb:10.6
+           ports:
+           - containerPort: 3306
+           env:
+           - name: MYSQL_ROOT_PASSWORD
+             valueFrom:
+               secretKeyRef:
+                 name: mariadb-secret
+                 key: root-password
+           - name: MYSQL_DATABASE
+             value: edu_ai_db
+           volumeMounts:
+           - name: mariadb-data
+             mountPath: /var/lib/mysql
+           - name: config
+             mountPath: /etc/mysql/conf.d
+         volumes:
+         - name: mariadb-data
+           persistentVolumeClaim:
+             claimName: mariadb-pvc
+         - name: config
+           configMap:
+             name: mariadb-config
+   ---
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: mariadb
+     namespace: edu-ai-system
+   spec:
+     selector:
+       app: mariadb
+     ports:
+     - port: 3306
+       clusterIP: None
+```
+
+
+#### infra/k8s/redis-deployment.yaml
+
+Redis缓存服务部署配置，用于会话存储和任务队列
+
+```yaml
+# redis-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: edu-ai-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:6-alpine
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: edu-ai-system
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+```
+
+## 基础设施配置文件
+
 ## 1. 部署概述
 
 本文档描述教育AI题库与作业系统的部署流程，包括环境要求、部署步骤和配置说明，适用于系统管理员和运维人员。
@@ -2306,4 +2639,3019 @@ def load_model(model_name):
 对于生产环境，建议使用Kubernetes进行部署，并结合CI/CD流水线实现自动化部署。同时，需要配置完善的监控、日志和备份机制，确保系统的可观测性和可靠性。
 
 如在部署过程中遇到问题，可以参考本文档的故障排查部分，或联系技术支持获取帮助。
+```
+
+## 其他配置文件
+
+
+#### .github/workflows/auto-review.yml
+
+GitHub Actions自动审查工作流，用于代码质量检查和文档同步验证
+
+```yaml
+name: Auto Review Docs vs Code
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Clean generated files
+        run: python scripts/cleanup_generated_files.py
+
+      - name: Split Markdown docs
+        run: python scripts/split_md_code_autosave.py
+
+      - name: Auto Review
+        run: python scripts/auto_review_md_vs_code.py
+```
+
+
+
+#### .github/workflows/auto-review.yml
+
+GitHub Actions自动审查工作流，用于代码质量检查和文档同步验证
+
+```yaml
+name: Auto Review Docs vs Code
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Clean generated files
+        run: python scripts/cleanup_generated_files.py
+
+      - name: Split Markdown docs
+        run: python scripts/split_md_code_autosave.py
+
+      - name: Auto Review
+        run: python scripts/auto_review_md_vs_code.py
+```
+
+## 自动化脚本和工具
+
+
+#### scripts/sync_md_code_by_comment.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+**正确的自动拆分脚本如下：**  
+它会自动识别代码块语言和首行文件名注释，将代码保存到对应文件（自动补充扩展名）。
+
+````python
+import re
+import os
+
+md_path = '../docs/教育AI题库系统文档.md'
+project_root = '..'
+
+lang_ext = {
+    'python': '.py',
+    'javascript': '.js',
+    'js': '.js',
+    'vue': '.vue',
+    'yaml': '.yaml',
+    'yml': '.yml',
+    'bash': '.sh',
+    'plaintext': '.txt',
+    'mermaid': '.mmd',
+    'sql': '.sql',
+    'markdown': '.md',
+}
+
+with open(md_path, encoding='utf-8') as f:
+    md_content = f.read()
+
+# 匹配代码块，提取语言和内容
+pattern = r'```(\w+)\n(.*?)(?=```)'  # 只匹配代码块
+matches = re.findall(pattern, md_content, re.DOTALL)
+
+for lang, code in matches:
+    lang = lang.strip().lower()
+    code_lines = code.strip().splitlines()
+    if not code_lines:
+        continue
+    # 文件名在首行注释，如 "# backend/database.py"
+    first_line = code_lines[0].strip()
+    file_match = re.match(r'#\s*([\w\-/\.]+)', first_line)
+    if file_match:
+        filename = file_match.group(1)
+        ext = lang_ext.get(lang, '.txt')
+        if not filename.endswith(ext):
+            filename += ext
+        abs_path = os.path.join(project_root, filename)
+        os.makedirs(os.path.dirname(abs_path), exist_ok=True)
+        # 去掉首行文件名注释
+        code_to_write = '\n'.join(code_lines[1:]).strip() + '\n'
+        with open(abs_path, 'w', encoding='utf-8') as f:
+            f.write(code_to_write)
+        print(f'已保存: {abs_path}')
+```
+
+
+#### scripts/repo_scanner.py
+
+仓库文件扫描工具，用于分析项目结构和生成文件清单
+
+```python
+#!/usr/bin/env python3
+"""
+Repository Scanner for Auto Documentation Completion
+Scans the repository for all code files and generates an inventory.
+"""
+
+import os
+import re
+from pathlib import Path
+from typing import Dict, List, Set, Tuple
+import json
+
+# 文件类型映射
+FILE_TYPES = {
+    '.py': 'python',
+    '.js': 'javascript', 
+    '.vue': 'vue',
+    '.yaml': 'yaml',
+    '.yml': 'yaml',
+    '.json': 'json',
+    '.md': 'markdown',
+    '.sql': 'sql',
+    '.sh': 'bash',
+    '.dockerfile': 'dockerfile',
+    '.txt': 'plaintext',
+    '.mmd': 'mermaid'
+}
+
+# 目录分类
+DIRECTORY_CATEGORIES = {
+    'backend': ['backend', 'server', 'api'],
+    'frontend': ['frontend', 'client', 'web', 'ui'],
+    'infrastructure': ['k8s', 'kubernetes', 'infra', 'deploy', 'docker'],
+    'scripts': ['scripts', 'tools', 'utils'],
+    'docs': ['docs', 'documentation'],
+    'config': ['config', 'conf', 'settings']
+}
+
+def get_file_category(file_path: str) -> str:
+    """根据文件路径确定文件类别"""
+    path_parts = Path(file_path).parts
+    
+    for category, keywords in DIRECTORY_CATEGORIES.items():
+        for part in path_parts:
+            if any(keyword in part.lower() for keyword in keywords):
+                return category
+    
+    return 'other'
+
+def get_file_type(file_path: str) -> str:
+    """根据文件扩展名确定文件类型"""
+    ext = Path(file_path).suffix.lower()
+    return FILE_TYPES.get(ext, 'unknown')
+
+def scan_repository(repo_root: str) -> Dict:
+    """扫描仓库中的所有代码文件"""
+    repo_path = Path(repo_root)
+    file_inventory = {
+        'summary': {
+            'total_files': 0,
+            'categories': {},
+            'file_types': {}
+        },
+        'files': []
+    }
+    
+    # 忽略的目录和文件
+    ignore_patterns = {
+        '.git', '__pycache__', 'node_modules', '.DS_Store', 
+        '*.pyc', '*.log', '.vscode', '.idea'
+    }
+    
+    for root, dirs, files in os.walk(repo_path):
+        # 过滤忽略的目录
+        dirs[:] = [d for d in dirs if d not in ignore_patterns]
+        
+        for file in files:
+            # 跳过隐藏文件和忽略的文件
+            if file.startswith('.') and file not in ['.gitignore', '.env.example']:
+                continue
+                
+            file_path = os.path.join(root, file)
+            relative_path = os.path.relpath(file_path, repo_root)
+            
+            # 跳过忽略的文件模式
+            if any(pattern in file for pattern in ignore_patterns):
+                continue
+            
+            file_type = get_file_type(file_path)
+            if file_type == 'unknown':
+                continue
+                
+            category = get_file_category(relative_path)
+            
+            file_info = {
+                'path': relative_path,
+                'absolute_path': file_path,
+                'category': category,
+                'type': file_type,
+                'size': os.path.getsize(file_path),
+                'is_documented': False  # 后续会更新
+            }
+            
+            file_inventory['files'].append(file_info)
+            
+            # 更新统计信息
+            file_inventory['summary']['total_files'] += 1
+            file_inventory['summary']['categories'][category] = \
+                file_inventory['summary']['categories'].get(category, 0) + 1
+            file_inventory['summary']['file_types'][file_type] = \
+                file_inventory['summary']['file_types'].get(file_type, 0) + 1
+    
+    return file_inventory
+
+def read_file_content(file_path: str) -> str:
+    """安全读取文件内容"""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except UnicodeDecodeError:
+        try:
+            with open(file_path, 'r', encoding='gb2312') as f:
+                return f.read()
+        except:
+            return f"# 无法读取文件内容 (编码问题): {file_path}"
+    except Exception as e:
+        return f"# 读取文件失败: {e}"
+
+def generate_file_description(file_info: Dict) -> str:
+    """为文件生成描述"""
+    category = file_info['category']
+    file_type = file_info['type']
+    path = file_info['path']
+    
+    descriptions = {
+        'backend': {
+            'python': '后端Python源码文件',
+            'yaml': '后端部署配置文件',
+            'json': '后端配置文件'
+        },
+        'frontend': {
+            'javascript': '前端JavaScript文件',
+            'vue': '前端Vue组件文件',
+            'json': '前端配置文件'
+        },
+        'infrastructure': {
+            'yaml': 'Kubernetes部署配置文件',
+            'python': '基础设施管理脚本'
+        },
+        'scripts': {
+            'python': '自动化脚本文件',
+            'bash': 'Shell脚本文件'
+        },
+        'docs': {
+            'markdown': '项目文档文件'
+        }
+    }
+    
+    if category in descriptions and file_type in descriptions[category]:
+        return descriptions[category][file_type]
+    
+    return f"{category}目录下的{file_type}文件"
+
+def main():
+    """主函数"""
+    repo_root = '/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank'
+    
+    print("🔍 正在扫描仓库文件...")
+    inventory = scan_repository(repo_root)
+    
+    print(f"\n📊 扫描结果统计:")
+    print(f"总文件数: {inventory['summary']['total_files']}")
+    
+    print(f"\n📁 按类别分布:")
+    for category, count in inventory['summary']['categories'].items():
+        print(f"  {category}: {count} 个文件")
+    
+    print(f"\n📄 按文件类型分布:")
+    for file_type, count in inventory['summary']['file_types'].items():
+        print(f"  {file_type}: {count} 个文件")
+    
+    print(f"\n📋 详细文件清单:")
+    for file_info in sorted(inventory['files'], key=lambda x: (x['category'], x['path'])):
+        print(f"  [{file_info['category']}] {file_info['path']} ({file_info['type']})")
+    
+    # 保存扫描结果
+    output_file = os.path.join(repo_root, 'scripts', 'repo_inventory.json')
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(inventory, f, ensure_ascii=False, indent=2)
+    
+    print(f"\n💾 扫描结果已保存到: {output_file}")
+    
+    return inventory
+
+if __name__ == "__main__":
+    main()
+```
+
+
+#### scripts/sync_md_code_autoext.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+import re
+import os
+
+md_path = 'docs/教育AI题库系统文档.md'
+project_root = '.'  # 项目根目录
+
+# 代码块语言到扩展名映射
+lang_ext = {
+    'python': '.py',
+    'javascript': '.js',
+    'js': '.js',
+    'vue': '.vue',
+    'yaml': '.yaml',
+    'yml': '.yml',
+    'bash': '.sh',
+    'plaintext': '.txt',
+    'mermaid': '.mmd',
+    'sql': '.sql',
+    'markdown': '.md',
+}
+
+# 支持常见代码块前缀格式
+patterns = [
+    r'####\s*([^\n]+)\n```(\w+)\n(.*?)```',
+    r'文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'#\s*([^\n]+)\n```(\w+)\n(.*?)```',
+]
+
+with open(md_path, encoding='utf-8') as f:
+    md_content = f.read()
+
+blocks = []
+for pattern in patterns:
+    for match in re.findall(pattern, md_content, re.DOTALL):
+        filename, lang, code = match
+        filename = filename.strip()
+        lang = lang.strip().lower()
+        code = code.strip()
+        # 自动补充扩展名
+        ext = lang_ext.get(lang, '.txt')
+        if not filename.endswith(ext):
+            filename += ext
+        blocks.append({
+            "filename": filename,
+            "lang": lang,
+            "code": code
+        })
+
+for block in blocks:
+    rel_path = block["filename"]
+    abs_path = os.path.join(project_root, rel_path)
+    os.makedirs(os.path.dirname(abs_path), exist_ok=True)
+    with open(abs_path, 'w', encoding='utf-8') as f:
+        f.write(block["code"] + '\n')
+    print(f'已保存: {abs_path}')
+```
+
+
+#### scripts/md_code_progress_report.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+import re
+import os
+import difflib
+import csv
+
+md_path = '../docs/教育AI题库系统文档.md'
+project_root = '../'
+report_md = 'code_progress_report.md'
+report_csv = 'code_progress_report.csv'
+
+# 支持多种标记格式
+patterns = [
+    r'# 文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'## *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'### *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'#### *([^\n]+)\n```(\w+)\n(.*?)```',
+]
+
+md_blocks = []
+with open(md_path, encoding='utf-8') as f:
+    md_content = f.read()
+for pattern in patterns:
+    for match in re.findall(pattern, md_content, re.DOTALL):
+        filename, lang, code = match
+        md_blocks.append({
+            "filename": filename.strip(),
+            "lang": lang,
+            "code": code.strip()
+        })
+
+results = []
+for block in md_blocks:
+    rel_path = block["filename"]
+    abs_path = os.path.join(project_root, rel_path)
+    status = ""
+    detail = ""
+    md_code = block["code"]
+
+    need_fix = False
+    if os.path.isfile(abs_path):
+        with open(abs_path, encoding='utf-8') as f:
+            actual_code = f.read().strip()
+        if actual_code == md_code:
+            status = "✅ 完全一致"
+            detail = ""
+        else:
+            ratio = difflib.SequenceMatcher(None, md_code, actual_code).ratio()
+            status = f"⚠️ 不一致（已自动修复，相似度 {ratio:.2f}）"
+            diff = '\n'.join(list(difflib.unified_diff(md_code.splitlines(), actual_code.splitlines(), lineterm='', n=3)))
+            detail = diff[:200] + "..." if len(diff) > 200 else diff
+            need_fix = True
+    else:
+        status = "❌ 缺失（已自动修复）"
+        detail = ""
+        need_fix = True
+
+    # 自动修复
+    if need_fix:
+        os.makedirs(os.path.dirname(abs_path), exist_ok=True)
+        with open(abs_path, 'w', encoding='utf-8') as f:
+            f.write(md_code + '\n')
+
+    results.append({
+        "文件名": rel_path,
+        "语言": block["lang"],
+        "状态": status,
+        "相似度/差异": detail
+    })
+
+# 生成 Markdown 报表
+with open(report_md, 'w', encoding='utf-8') as f:
+    f.write("| 文件名 | 状态 | 语言 | 相似度/差异 |\n")
+    f.write("|---|---|---|---|\n")
+    for row in results:
+        f.write(f"| {row['文件名']} | {row['状态']} | {row['语言']} | {row['相似度/差异'].replace('|', '\\|')[:100]} |\n")
+
+# 生成 CSV 报表
+with open(report_csv, 'w', encoding='utf-8', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(["文件名", "状态", "语言", "相似度/差异"])
+    for row in results:
+        writer.writerow([row['文件名'], row['状态'], row['语言'], row['相似度/差异'][:100]])
+
+print(f"已生成进度报表：{report_md} 和 {report_csv}")
+print("所有不一致或缺失文件已自动修复。")
+```
+
+
+#### scripts/5.2.2 索引优化.sql
+
+SQL数据库脚本，用于数据库结构优化、索引创建和数据维护
+
+```sql
+-- 用户表索引
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_role ON users(role);
+
+-- 题目表索引
+CREATE INDEX idx_questions_subject_id ON questions(subject_id);
+CREATE INDEX idx_questions_difficulty ON questions(difficulty);
+CREATE INDEX idx_questions_created_at ON questions(created_at);
+
+-- 作业分配表索引
+CREATE INDEX idx_homework_assignments_homework_id ON homework_assignments(homework_id);
+CREATE INDEX idx_homework_assignments_student_id ON homework_assignments(student_id);
+CREATE INDEX idx_homework_assignments_status ON homework_assignments(status);
+```
+
+
+#### scripts/split_md_code_autosave.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+import re
+import os
+
+md_files = [
+    '../docs/系统UI设计方案文档.md',
+    '../docs/教育AI全栈设计方案.md',
+    '../docs/教育AI题库系统文档.md'
+]
+project_root = '../'
+
+lang_ext = {
+    'python': '.py',
+    'javascript': '.js',
+    'vue': '.vue',
+    'yaml': '.yaml',
+    'plaintext': '.txt',
+    'mermaid': '.mmd',
+    'json': '.json'
+}
+
+def auto_dir(filename):
+    # 只要是带目录的文件名，直接拼接到 project_root
+    if '/' in filename or filename.endswith(('.yml', '.yaml')):
+        return os.path.join(project_root, filename)
+    else:
+        return os.path.join(project_root, 'misc', filename)
+
+patterns = [
+    r'[#]{1,3} ?文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'[#]{1,3} ?([^\n]+)\n```(\w+)\n(.*?)```',
+]
+
+generated_files = []
+
+for md_path in md_files:
+    if not os.path.isfile(md_path):
+        print(f"未找到文档: {md_path}")
+        continue
+    with open(md_path, encoding='utf-8') as f:
+        content = f.read()
+
+    found = {}
+    for pattern in patterns:
+        for match in re.findall(pattern, content, re.DOTALL):
+            filename, lang, code = match
+            filename = re.sub(r'^[# ]+', '', filename.strip())
+            # 只过滤非法字符，不替换 /
+            filename = re.sub(r'[:*?"<>|]', '_', filename)
+            ext = lang_ext.get(lang.lower(), '.txt')
+            if not filename.endswith(ext):
+                filename += ext
+            path = auto_dir(filename)
+            if path not in found:
+                found[path] = []
+            found[path].append(code.strip())
+
+    for path, codes in found.items():
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write('\n\n'.join(codes))
+        print(f'已保存: {path}，包含 {len(codes)} 段代码')
+        generated_files.append(os.path.relpath(path, project_root))
+
+# 自动生成文件树
+def print_tree(paths):
+    tree = {}
+    for p in paths:
+        parts = p.split(os.sep)
+        cur = tree
+        for part in parts:
+            cur = cur.setdefault(part, {})
+    def _print(cur, prefix=''):
+        for k, v in cur.items():
+            print(prefix + '├── ' + k)
+            _print(v, prefix + '│   ')
+    print("\n生成文件树：")
+    _print(tree, '')
+
+print_tree(generated_files)
+```
+
+
+#### scripts/4.2.9 初始化数据库.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+# 在后端Pod中运行数据库迁移
+kubectl exec -it deployment/backend -n edu-ai-system -- alembic upgrade head
+
+# 创建初始管理员用户
+kubectl exec -it deployment/backend -n edu-ai-system -- python -c "
+from backend.database import SessionLocal
+from backend.models import User
+from backend.auth import get_password_hash
+db = SessionLocal()
+admin = User(username='admin', password_hash=get_password_hash('admin'), name='管理员', role='admin')
+db.add(admin)
+db.commit()
+print('管理员用户已创建')
+"
+```
+
+
+#### scripts/4.1.4 停止服务.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+docker-compose down
+```
+
+
+#### scripts/4.2.2 创建命名空间.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+kubectl create namespace edu-ai-system
+```
+
+
+#### scripts/sync_md_code.py
+
+文档代码同步工具，将文档中的代码块同步到实际文件
+
+```python
+import re
+import os
+
+md_path = '../docs/教育AI题库系统文档.md'
+project_root = '.'  # 当前项目根目录
+
+# 支持常见代码块前缀格式
+patterns = [
+    r'####\s*([^\n]+)\n```(\w+)\n(.*?)```',
+    r'文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+]
+
+with open(md_path, encoding='utf-8') as f:
+    md_content = f.read()
+
+blocks = []
+for pattern in patterns:
+    for match in re.findall(pattern, md_content, re.DOTALL):
+        filename, lang, code = match
+        blocks.append({
+            "filename": filename.strip(),
+            "lang": lang,
+            "code": code.strip()
+        })
+
+for block in blocks:
+    rel_path = block["filename"]
+    abs_path = os.path.join(project_root, rel_path)
+    os.makedirs(os.path.dirname(abs_path), exist_ok=True)
+    with open(abs_path, 'w', encoding='utf-8') as f:
+        f.write(block["code"] + '\n')
+    print(f'已覆盖保存: {abs_path}')
+```
+
+
+#### scripts/auto_review_md_vs_code.py
+
+文档代码一致性检查工具，对比文档中的代码块与实际文件
+
+```python
+import re
+import os
+import difflib
+import sys
+
+md_files = [
+    '../docs/系统UI设计方案文档.md',
+    '../docs/教育AI全栈设计方案.md',
+    '../docs/教育AI题库系统文档.md'
+]
+output_root = '../generated'
+report_md = 'auto_review_report.md'
+lang_ext = {
+    'python': '.py',
+    'javascript': '.js',
+    'vue': '.vue',
+    'yaml': '.yaml',
+    'plaintext': '.txt',
+    'mermaid': '.mmd',
+    'json': '.json'
+}
+
+patterns = [
+    r'[#]{1,3} ?文件名[:：] *([^\n]+)\n```(\w+)\n(.*?)```',
+    r'[#]{1,3} ?([^\n]+)\n```(\w+)\n(.*?)```',
+]
+
+md_blocks = []
+for md_path in md_files:
+    if not os.path.isfile(md_path):
+        continue
+    with open(md_path, encoding='utf-8') as f:
+        content = f.read()
+    for pattern in patterns:
+        for match in re.findall(pattern, content, re.DOTALL):
+            filename, lang, code = match
+            filename = filename.strip()
+            filename = re.sub(r'^[# ]+', '', filename)
+            filename = re.sub(r'[\\/:*?"<>|]', '_', filename)
+            ext = lang_ext.get(lang.lower(), '.txt')
+            if not filename.endswith(ext):
+                filename += ext
+            md_blocks.append({
+                "filename": filename,
+                "lang": lang,
+                "code": code.strip()
+            })
+
+results = []
+errors = []
+
+for block in md_blocks:
+    rel_path = block["filename"]
+    abs_path = os.path.join(output_root, rel_path)
+    md_code = block["code"]
+
+    try:
+        if os.path.isfile(abs_path):
+            with open(abs_path, encoding='utf-8') as f:
+                actual_code = f.read().strip()
+            if actual_code == md_code:
+                status = "✅ 完全一致"
+            else:
+                ratio = difflib.SequenceMatcher(None, md_code, actual_code).ratio()
+                status = f"⚠️ 不一致（相似度 {ratio:.2f}）"
+                errors.append(f"{rel_path} 内容不一致，相似度 {ratio:.2f}")
+        else:
+            status = "❌ 缺失"
+            errors.append(f"{rel_path} 缺失")
+    except Exception as e:
+        status = f"❌ 读取失败: {e}"
+        errors.append(f"{rel_path} 读取失败: {e}")
+
+    results.append({
+        "文件名": rel_path,
+        "语言": block["lang"],
+        "状态": status,
+    })
+
+with open(report_md, 'w', encoding='utf-8') as f:
+    f.write("| 文件名 | 状态 | 语言 |\n|---|---|---|\n")
+    for row in results:
+        f.write(f"| {row['文件名']} | {row['状态']} | {row['语言']} |\n")
+
+if errors:
+    print("自动审核未通过：")
+    for err in errors:
+        print(f"- {err}")
+    sys.exit(1)
+else:
+    print("自动审核全部通过 ✅ ")
+    sys.exit(0)
+```
+
+
+#### scripts/split_md_code_advanced.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+import re
+import os
+
+md_path = '../docs/教育AI题库系统文档.md'
+output_root = '../'
+
+with open(md_path, 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# 支持 "#### backend/main.py" 或 "#### frontend/src/api/index.js" 这种格式
+pattern = r'####\s*([^\n]+)\n```(\w+)\n(.*?)```'
+matches = re.findall(pattern, content, re.DOTALL)
+
+for filename, lang, code in matches:
+    file_path = os.path.join(output_root, filename.strip())
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(code.strip() + '\n')
+    print(f'已保存: {file_path}')
+```
+
+
+#### scripts/4.2.9 初始化数据库.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+# 在后端Pod中运行数据库迁移
+kubectl exec -it deployment/backend -n edu-ai-system -- alembic upgrade head
+
+# 创建初始管理员用户
+kubectl exec -it deployment/backend -n edu-ai-system -- python -c "
+from backend.database import SessionLocal
+from backend.models import User
+from backend.auth import get_password_hash
+db = SessionLocal()
+admin = User(username='admin', password_hash=get_password_hash('admin'), name='管理员', role='admin')
+db.add(admin)
+db.commit()
+print('管理员用户已创建')
+"
+```
+
+
+#### scripts/auto_doc_integration.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+#!/usr/bin/env python3
+"""
+Auto Documentation Completion - Integration Script
+完整的自动文档补全流程，包括扫描、分析和更新
+"""
+
+import os
+import sys
+import json
+from datetime import datetime
+
+def run_command(command, description):
+    """运行命令并显示进度"""
+    print(f"🔄 {description}...")
+    result = os.system(command)
+    if result == 0:
+        print(f"✅ {description} - 完成")
+        return True
+    else:
+        print(f"❌ {description} - 失败")
+        return False
+
+def main():
+    """主流程"""
+    print("🚀 教育AI题库系统 - 自动文档补全系统")
+    print("=" * 50)
+    
+    repo_root = '/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank'
+    os.chdir(repo_root)
+    
+    # 步骤1：扫描仓库文件
+    if not run_command("python scripts/repo_scanner.py", "扫描仓库文件结构"):
+        sys.exit(1)
+    
+    # 步骤2：分析文档状态
+    if not run_command("python scripts/doc_parser.py", "分析文档化状态"):
+        sys.exit(1)
+    
+    # 步骤3：自动补全文档
+    if not run_command("python scripts/auto_doc_completion.py", "执行文档自动补全"):
+        sys.exit(1)
+    
+    # 步骤4：验证结果
+    print("\n🔍 验证补全结果...")
+    if not run_command("python scripts/doc_parser.py > /tmp/final_status.txt", "重新分析文档状态"):
+        sys.exit(1)
+    
+    # 显示最终统计
+    print("\n📊 补全结果统计:")
+    
+    try:
+        with open('scripts/auto_completion_report.json', 'r', encoding='utf-8') as f:
+            report = json.load(f)
+        
+        print(f"  处理时间: {report['timestamp']}")
+        print(f"  处理文件数: {report['processed_files']}")
+        print(f"  更新文档数: {len(report['updated_docs'])}")
+        
+        print(f"\n📝 更新的文档:")
+        for doc_path, info in report['updated_docs'].items():
+            print(f"  - {doc_path}: +{info['files_added']} 个文件")
+        
+        print(f"\n📁 按类别分布:")
+        for category, files in report['files_by_category'].items():
+            print(f"  - {category}: {len(files)} 个文件")
+    
+    except Exception as e:
+        print(f"⚠️ 无法读取补全报告: {e}")
+    
+    print("\n✅ 自动文档补全流程完成!")
+    print("\n📋 下一步建议:")
+    print("1. 检查更新后的文档内容是否准确")
+    print("2. 提交更改作为 Pull Request")
+    print("3. 团队审核文档补全结果")
+    print("4. 考虑添加更多详细说明和使用示例")
+    
+    return True
+
+if __name__ == "__main__":
+    main()
+```
+
+
+#### scripts/auto_doc_completion.py
+
+项目自动化脚本，用于代码生成、文档同步、部署和维护等任务
+
+```python
+#!/usr/bin/env python3
+"""
+Auto Documentation Completion Engine
+Automatically adds missing code files to documentation with descriptions and code blocks.
+"""
+
+import os
+import json
+import re
+from pathlib import Path
+from typing import Dict, List, Set, Tuple
+from datetime import datetime
+
+class AutoDocumentationEngine:
+    def __init__(self, repo_root: str):
+        self.repo_root = repo_root
+        self.main_docs = {
+            'docs/教育AI题库系统文档.md': 'system',
+            'docs/教育AI全栈设计方案.md': 'design', 
+            'docs/系统UI设计方案文档.md': 'ui'
+        }
+        
+        # 文件分类到文档的映射
+        self.file_to_doc_mapping = {
+            'backend': 'docs/教育AI全栈设计方案.md',
+            'frontend': 'docs/系统UI设计方案文档.md',
+            'infrastructure': 'docs/教育AI题库系统文档.md',
+            'scripts': 'docs/教育AI题库系统文档.md',
+            'docs': None,  # 不自动添加文档文件到文档中
+            'other': 'docs/教育AI题库系统文档.md'
+        }
+
+    def load_analysis_data(self) -> Tuple[Dict, Dict]:
+        """加载分析数据"""
+        inventory_file = os.path.join(self.repo_root, 'scripts', 'repo_inventory.json')
+        analysis_file = os.path.join(self.repo_root, 'scripts', 'doc_analysis.json')
+        
+        with open(inventory_file, 'r', encoding='utf-8') as f:
+            inventory = json.load(f)
+        
+        with open(analysis_file, 'r', encoding='utf-8') as f:
+            analysis = json.load(f)
+        
+        return inventory, analysis
+
+    def generate_file_description(self, file_info: Dict) -> str:
+        """为文件生成中文描述"""
+        category = file_info['category']
+        file_type = file_info['type']
+        file_path = file_info['path']
+        
+        # 基于文件路径和类型的描述模板
+        descriptions = {
+            'backend': {
+                'yaml': 'Kubernetes后端服务部署配置文件，定义了后端应用的部署规范、服务配置和网络策略',
+            },
+            'frontend': {
+                'yaml': 'Kubernetes前端服务部署配置文件，定义了前端应用的部署规范和负载均衡配置',
+                'markdown': '前端UI系统设计文档，包含组件设计、样式规范和交互流程'
+            },
+            'infrastructure': {
+                'yaml': 'Kubernetes基础设施配置文件，用于部署和管理容器化应用的基础组件',
+                'python': '基础设施管理和自动化脚本，用于部署、配置和维护系统组件'
+            },
+            'scripts': {
+                'python': '项目自动化脚本，用于代码生成、文档同步、部署和维护等任务',
+                'bash': '系统运维Shell脚本，用于服务管理、数据库操作和系统维护',
+                'sql': 'SQL数据库脚本，用于数据库结构优化、索引创建和数据维护',
+                'markdown': '脚本使用说明和运行报告文档'
+            },
+            'other': {
+                'yaml': 'CI/CD工作流配置文件，定义了自动化构建、测试和部署流程',
+                'markdown': '项目相关的说明文档和报告文件'
+            }
+        }
+        
+        # 基于具体文件名的特殊描述
+        special_descriptions = {
+            'repo_scanner.py': '仓库文件扫描工具，用于分析项目结构和生成文件清单',
+            'doc_parser.py': '文档解析工具，用于分析文档结构和识别文档化状态',
+            'auto_review_md_vs_code.py': '文档代码一致性检查工具，对比文档中的代码块与实际文件',
+            'sync_md_code.py': '文档代码同步工具，将文档中的代码块同步到实际文件',
+            'rename_yaml_by_content.py': 'YAML文件重命名工具，根据文件内容自动分类和重命名',
+            'ingress.yaml': 'Kubernetes Ingress配置，定义了外部访问路由和SSL终止',
+            'redis-deployment.yaml': 'Redis缓存服务部署配置，用于会话存储和任务队列',
+            'mariadb-configmap.yaml': 'MariaDB数据库配置映射，包含数据库初始化和配置参数',
+            'auto-review.yml': 'GitHub Actions自动审查工作流，用于代码质量检查和文档同步验证'
+        }
+        
+        # 获取文件名
+        filename = Path(file_path).name
+        
+        # 检查特殊描述
+        if filename in special_descriptions:
+            return special_descriptions[filename]
+        
+        # 使用通用描述
+        if category in descriptions and file_type in descriptions[category]:
+            return descriptions[category][file_type]
+        
+        # 默认描述
+        return f"{category}目录下的{file_type}文件，{filename}"
+
+    def read_file_content(self, file_path: str) -> str:
+        """安全读取文件内容"""
+        abs_path = os.path.join(self.repo_root, file_path)
+        try:
+            with open(abs_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return content.strip()
+        except UnicodeDecodeError:
+            try:
+                with open(abs_path, 'r', encoding='gb2312') as f:
+                    content = f.read()
+                return content.strip()
+            except:
+                return f"# 文件编码问题，无法读取: {file_path}"
+        except Exception as e:
+            return f"# 读取文件失败: {e}"
+
+    def get_language_from_extension(self, file_path: str) -> str:
+        """根据文件扩展名获取代码块语言"""
+        ext_mapping = {
+            '.py': 'python',
+            '.js': 'javascript',
+            '.vue': 'vue',
+            '.yaml': 'yaml',
+            '.yml': 'yaml',
+            '.json': 'json',
+            '.md': 'markdown',
+            '.sql': 'sql',
+            '.sh': 'bash',
+            '.txt': 'plaintext',
+            '.mmd': 'mermaid'
+        }
+        
+        ext = Path(file_path).suffix.lower()
+        return ext_mapping.get(ext, 'plaintext')
+
+    def generate_documentation_section(self, file_info: Dict) -> str:
+        """为文件生成文档章节"""
+        file_path = file_info['path']
+        description = self.generate_file_description(file_info)
+        content = self.read_file_content(file_path)
+        language = self.get_language_from_extension(file_path)
+        
+        # 生成文档章节
+        section = f"""
+
+#### {file_path}
+
+{description}
+
+```{language}
+{content}
+```
+"""
+        return section
+
+    def find_insertion_point(self, doc_content: str, category: str) -> int:
+        """找到插入新章节的位置"""
+        # 为不同类别的文件找到合适的插入位置
+        insertion_patterns = {
+            'infrastructure': [
+                r'## 4\. 部署文档',
+                r'### 4\.2 生产环境部署',
+                r'## 部署',
+                r'## k8s',
+                r'## Kubernetes'
+            ],
+            'scripts': [
+                r'## 脚本',
+                r'## 工具',
+                r'## 自动化',
+                r'## 维护',
+                r'$'  # 文档末尾
+            ],
+            'backend': [
+                r'## 后端',
+                r'## backend',
+                r'## 核心文件实现',
+                r'### 1\. 后端核心文件'
+            ],
+            'frontend': [
+                r'## 前端',
+                r'## frontend',
+                r'## UI',
+                r'## 组件'
+            ],
+            'other': [
+                r'## 其他',
+                r'## 配置',
+                r'$'  # 文档末尾
+            ]
+        }
+        
+        patterns = insertion_patterns.get(category, [r'$'])
+        
+        for pattern in patterns:
+            if pattern == '$':
+                return len(doc_content)
+            
+            match = re.search(pattern, doc_content, re.MULTILINE)
+            if match:
+                # 找到下一个同级或更高级标题的位置
+                section_start = match.start()
+                remaining_content = doc_content[section_start:]
+                
+                # 查找下一个同级标题
+                next_section = re.search(r'\n## ', remaining_content)
+                if next_section:
+                    return section_start + next_section.start()
+                else:
+                    return len(doc_content)
+        
+        # 如果没有找到合适的位置，插入到末尾
+        return len(doc_content)
+
+    def add_section_header_if_needed(self, doc_content: str, category: str) -> str:
+        """如果需要，添加新的章节标题"""
+        section_headers = {
+            'infrastructure': '## 基础设施配置文件',
+            'scripts': '## 自动化脚本和工具',
+            'other': '## 其他配置文件'
+        }
+        
+        header = section_headers.get(category)
+        if not header:
+            return doc_content
+        
+        # 检查是否已存在相应的章节
+        if re.search(header.replace('##', r'##\s*'), doc_content):
+            return doc_content
+        
+        # 在合适的位置添加章节标题
+        insertion_point = self.find_insertion_point(doc_content, category)
+        
+        new_section = f"\n\n{header}\n"
+        new_content = (doc_content[:insertion_point] + 
+                      new_section + 
+                      doc_content[insertion_point:])
+        
+        return new_content
+
+    def update_documentation(self, undocumented_files: List[Dict]) -> Dict:
+        """更新文档，添加未文档化的文件"""
+        updates = {}
+        
+        # 按文档分组文件
+        files_by_doc = {}
+        for file_info in undocumented_files:
+            category = file_info['category']
+            target_doc = self.file_to_doc_mapping.get(category)
+            
+            if target_doc and target_doc in self.main_docs:
+                if target_doc not in files_by_doc:
+                    files_by_doc[target_doc] = []
+                files_by_doc[target_doc].append(file_info)
+        
+        # 更新每个文档
+        for doc_path, files in files_by_doc.items():
+            abs_doc_path = os.path.join(self.repo_root, doc_path)
+            
+            if not os.path.exists(abs_doc_path):
+                print(f"⚠️ 文档文件不存在: {doc_path}")
+                continue
+            
+            # 读取原始文档
+            with open(abs_doc_path, 'r', encoding='utf-8') as f:
+                original_content = f.read()
+            
+            updated_content = original_content
+            
+            # 按类别分组文件
+            files_by_category = {}
+            for file_info in files:
+                category = file_info['category']
+                if category not in files_by_category:
+                    files_by_category[category] = []
+                files_by_category[category].append(file_info)
+            
+            # 为每个类别添加文件
+            for category, category_files in files_by_category.items():
+                # 添加章节标题（如果需要）
+                updated_content = self.add_section_header_if_needed(updated_content, category)
+                
+                # 为每个文件生成文档章节
+                for file_info in category_files:
+                    section = self.generate_documentation_section(file_info)
+                    
+                    # 找到插入位置
+                    insertion_point = self.find_insertion_point(updated_content, category)
+                    
+                    # 插入新章节
+                    updated_content = (updated_content[:insertion_point] + 
+                                     section + 
+                                     updated_content[insertion_point:])
+            
+            # 保存更新的文档
+            backup_path = abs_doc_path + f'.backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            
+            # 创建备份
+            with open(backup_path, 'w', encoding='utf-8') as f:
+                f.write(original_content)
+            
+            # 保存更新
+            with open(abs_doc_path, 'w', encoding='utf-8') as f:
+                f.write(updated_content)
+            
+            updates[doc_path] = {
+                'files_added': len(files),
+                'backup_created': backup_path,
+                'categories': list(files_by_category.keys())
+            }
+            
+            print(f"✅ 已更新文档: {doc_path}")
+            print(f"   添加文件: {len(files)} 个")
+            print(f"   备份创建: {backup_path}")
+        
+        return updates
+
+def main():
+    """主函数"""
+    repo_root = '/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank'
+    
+    # 初始化引擎
+    engine = AutoDocumentationEngine(repo_root)
+    
+    # 加载分析数据
+    try:
+        inventory, analysis = engine.load_analysis_data()
+    except FileNotFoundError as e:
+        print(f"❌ 请先运行 repo_scanner.py 和 doc_parser.py: {e}")
+        return
+    
+    # 获取未文档化的文件
+    undocumented_files = []
+    existing_files = {f['path']: f for f in inventory['files']}
+    
+    for file_path in analysis['comparison']['existing_but_undocumented']:
+        if file_path in existing_files:
+            undocumented_files.append(existing_files[file_path])
+    
+    # 过滤掉不需要自动文档化的文件（如文档文件本身）
+    filtered_files = [
+        f for f in undocumented_files 
+        if f['category'] != 'docs' and not f['path'].endswith('.md')
+    ]
+    
+    print(f"🚀 开始自动补全文档...")
+    print(f"📊 将处理 {len(filtered_files)} 个未文档化的文件")
+    
+    # 按类别显示文件
+    categories = {}
+    for f in filtered_files:
+        cat = f['category']
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append(f['path'])
+    
+    for category, files in categories.items():
+        print(f"  [{category}] {len(files)} 个文件")
+    
+    # 执行文档更新
+    updates = engine.update_documentation(filtered_files)
+    
+    print(f"\n✅ 文档自动补全完成!")
+    print(f"📝 更新了 {len(updates)} 个文档文件:")
+    
+    for doc_path, info in updates.items():
+        print(f"  {doc_path}: 添加了 {info['files_added']} 个文件")
+    
+    # 保存更新报告
+    report_file = os.path.join(repo_root, 'scripts', 'auto_completion_report.json')
+    report = {
+        'timestamp': datetime.now().isoformat(),
+        'processed_files': len(filtered_files),
+        'updated_docs': updates,
+        'files_by_category': categories
+    }
+    
+    with open(report_file, 'w', encoding='utf-8') as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    
+    print(f"\n📄 更新报告已保存到: {report_file}")
+
+if __name__ == "__main__":
+    main()
+```
+
+
+#### scripts/4.2.2 创建命名空间.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+kubectl create namespace edu-ai-system
+```
+
+
+#### scripts/auto_completion_report.json
+
+scripts目录下的json文件，auto_completion_report.json
+
+```json
+{
+  "timestamp": "2025-08-26T03:21:10.674502",
+  "processed_files": 26,
+  "updated_docs": {
+    "docs/教育AI题库系统文档.md": {
+      "files_added": 22,
+      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md.backup_20250826_032110",
+      "categories": [
+        "infrastructure",
+        "other",
+        "scripts"
+      ]
+    },
+    "docs/教育AI全栈设计方案.md": {
+      "files_added": 3,
+      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI全栈设计方案.md.backup_20250826_032110",
+      "categories": [
+        "backend"
+      ]
+    },
+    "docs/系统UI设计方案文档.md": {
+      "files_added": 1,
+      "backup_created": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/系统UI设计方案文档.md.backup_20250826_032110",
+      "categories": [
+        "frontend"
+      ]
+    }
+  },
+  "files_by_category": {
+    "infrastructure": [
+      "infra/k8s/rename_yaml_by_content.py",
+      "infra/k8s/ingress_2.yaml",
+      "infra/k8s/tls-secret.yaml",
+      "infra/k8s/redis-persistent.yaml",
+      "infra/k8s/network-policy.yaml",
+      "infra/k8s/ingress.yaml",
+      "infra/k8s/mariadb-configmap_2.yaml",
+      "infra/k8s/mariadb-configmap.yaml",
+      "infra/k8s/redis-deployment.yaml"
+    ],
+    "other": [
+      ".github/workflows/auto-review.yml"
+    ],
+    "scripts": [
+      "scripts/sync_md_code_by_comment.py",
+      "scripts/repo_scanner.py",
+      "scripts/sync_md_code_autoext.py",
+      "scripts/md_code_progress_report.py",
+      "scripts/5.2.2 索引优化.sql",
+      "scripts/split_md_code_autosave.py",
+      "scripts/4.2.9 初始化数据库.sh",
+      "scripts/4.1.4 停止服务.sh",
+      "scripts/4.2.2 创建命名空间.sh",
+      "scripts/sync_md_code.py",
+      "scripts/auto_review_md_vs_code.py",
+      "scripts/split_md_code_advanced.py"
+    ],
+    "backend": [
+      "infra/k8s/backend-deployment_2.yaml",
+      "infra/k8s/backend-deployment_3.yaml",
+      "infra/k8s/backend-deployment.yaml"
+    ],
+    "frontend": [
+      "infra/k8s/frontend-deployment.yaml"
+    ]
+  }
+}
+```
+
+
+#### scripts/5.2.2 索引优化.sql
+
+SQL数据库脚本，用于数据库结构优化、索引创建和数据维护
+
+```sql
+-- 用户表索引
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_role ON users(role);
+
+-- 题目表索引
+CREATE INDEX idx_questions_subject_id ON questions(subject_id);
+CREATE INDEX idx_questions_difficulty ON questions(difficulty);
+CREATE INDEX idx_questions_created_at ON questions(created_at);
+
+-- 作业分配表索引
+CREATE INDEX idx_homework_assignments_homework_id ON homework_assignments(homework_id);
+CREATE INDEX idx_homework_assignments_student_id ON homework_assignments(student_id);
+CREATE INDEX idx_homework_assignments_status ON homework_assignments(status);
+```
+
+
+#### scripts/doc_parser.py
+
+文档解析工具，用于分析文档结构和识别文档化状态
+
+```python
+#!/usr/bin/env python3
+"""
+Documentation Parser for Auto Documentation Completion
+Parses existing documentation to identify documented vs missing code files.
+"""
+
+import os
+import re
+import json
+from pathlib import Path
+from typing import Dict, List, Set, Tuple
+
+class DocumentationParser:
+    def __init__(self, repo_root: str):
+        self.repo_root = repo_root
+        self.doc_files = [
+            'docs/教育AI题库系统文档.md',
+            'docs/教育AI全栈设计方案.md', 
+            'docs/系统UI设计方案文档.md'
+        ]
+        
+        # 匹配代码块的正则模式
+        self.code_block_patterns = [
+            r'####\s*([^\n]+)\n```(\w+)\n(.*?)```',  # #### filename
+            r'###\s*([^\n]+)\n```(\w+)\n(.*?)```',   # ### filename
+            r'##\s*([^\n]+)\n```(\w+)\n(.*?)```',    # ## filename
+            r'文件名[:：]\s*([^\n]+)\n```(\w+)\n(.*?)```',  # 文件名: filename
+            r'[#]*\s*([^\n]*\.(?:py|js|vue|yaml|yml|json|md|sql|sh))\s*\n```(\w+)\n(.*?)```'  # 文件扩展名
+        ]
+        
+        # 路径引用模式
+        self.path_reference_patterns = [
+            r'(?:backend|frontend|k8s|scripts|docs)/[^\s\)]+\.(?:py|js|vue|yaml|yml|json|md|sql|sh)',
+            r'[^\s\)]+/[^\s\)]+\.(?:py|js|vue|yaml|yml|json|md|sql|sh)'
+        ]
+
+    def parse_documentation(self) -> Dict:
+        """解析文档，提取所有代码引用和代码块"""
+        result = {
+            'documented_files': {},  # 文件路径 -> 文档信息
+            'code_blocks': [],       # 代码块列表
+            'file_references': set(), # 文件路径引用
+            'missing_files': set(),   # 文档中引用但不存在的文件
+            'doc_summary': {}         # 每个文档的摘要
+        }
+        
+        for doc_file in self.doc_files:
+            doc_path = os.path.join(self.repo_root, doc_file)
+            if not os.path.exists(doc_path):
+                continue
+                
+            print(f"📖 解析文档: {doc_file}")
+            
+            with open(doc_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # 解析代码块
+            code_blocks = self._extract_code_blocks(content, doc_file)
+            result['code_blocks'].extend(code_blocks)
+            
+            # 解析文件路径引用
+            file_refs = self._extract_file_references(content)
+            result['file_references'].update(file_refs)
+            
+            # 文档摘要
+            result['doc_summary'][doc_file] = {
+                'code_blocks': len(code_blocks),
+                'file_references': len(file_refs),
+                'size': len(content)
+            }
+        
+        # 处理文档化的文件
+        for block in result['code_blocks']:
+            if block['filename']:
+                result['documented_files'][block['filename']] = {
+                    'source_doc': block['source_doc'],
+                    'language': block['language'],
+                    'has_code': bool(block['code'].strip()),
+                    'code_length': len(block['code'])
+                }
+        
+        return result
+
+    def _extract_code_blocks(self, content: str, source_doc: str) -> List[Dict]:
+        """从内容中提取代码块"""
+        code_blocks = []
+        
+        for pattern in self.code_block_patterns:
+            matches = re.findall(pattern, content, re.DOTALL)
+            for match in matches:
+                if len(match) == 3:
+                    filename, language, code = match
+                else:
+                    continue
+                    
+                # 清理文件名
+                filename = self._clean_filename(filename)
+                
+                if filename:
+                    code_blocks.append({
+                        'filename': filename,
+                        'language': language.lower(),
+                        'code': code.strip(),
+                        'source_doc': source_doc
+                    })
+        
+        return code_blocks
+
+    def _extract_file_references(self, content: str) -> Set[str]:
+        """从内容中提取文件路径引用"""
+        file_refs = set()
+        
+        for pattern in self.path_reference_patterns:
+            matches = re.findall(pattern, content)
+            for match in matches:
+                cleaned_path = self._clean_path_reference(match)
+                if cleaned_path:
+                    file_refs.add(cleaned_path)
+        
+        return file_refs
+
+    def _clean_filename(self, filename: str) -> str:
+        """清理文件名"""
+        # 移除前导的 # 符号和空格
+        filename = re.sub(r'^[#\s]+', '', filename.strip())
+        
+        # 移除 "文件名:" 前缀
+        filename = re.sub(r'^文件名[:：]\s*', '', filename)
+        
+        # 移除特殊字符（但保留路径分隔符）
+        filename = re.sub(r'[^\w\-_./\\]', '', filename)
+        
+        # 标准化路径分隔符
+        filename = filename.replace('\\', '/')
+        
+        # 移除多余的路径分隔符
+        filename = re.sub(r'/+', '/', filename)
+        
+        return filename if filename else None
+
+    def _clean_path_reference(self, path: str) -> str:
+        """清理路径引用"""
+        # 移除周围的标点符号
+        path = re.sub(r'^[^\w/]+|[^\w/]+$', '', path)
+        
+        # 标准化路径分隔符
+        path = path.replace('\\', '/')
+        
+        return path if path else None
+
+    def compare_with_actual_files(self, inventory: Dict) -> Dict:
+        """比较文档化的文件与实际存在的文件"""
+        doc_result = self.parse_documentation()
+        
+        actual_files = {f['path'] for f in inventory['files']}
+        documented_files = set(doc_result['documented_files'].keys())
+        all_referenced_files = documented_files | doc_result['file_references']
+        
+        comparison = {
+            'existing_but_undocumented': actual_files - all_referenced_files,
+            'documented_but_missing': all_referenced_files - actual_files,
+            'documented_and_existing': actual_files & documented_files,
+            'only_referenced': doc_result['file_references'] - documented_files,
+            'statistics': {
+                'total_actual_files': len(actual_files),
+                'total_documented_files': len(documented_files),
+                'total_referenced_files': len(doc_result['file_references']),
+                'undocumented_count': len(actual_files - all_referenced_files),
+                'missing_count': len(all_referenced_files - actual_files)
+            }
+        }
+        
+        return comparison, doc_result
+
+def main():
+    """主函数"""
+    repo_root = '/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank'
+    
+    # 加载仓库扫描结果
+    inventory_file = os.path.join(repo_root, 'scripts', 'repo_inventory.json')
+    if not os.path.exists(inventory_file):
+        print("❌ 请先运行 repo_scanner.py 生成文件清单")
+        return
+    
+    with open(inventory_file, 'r', encoding='utf-8') as f:
+        inventory = json.load(f)
+    
+    # 解析文档
+    parser = DocumentationParser(repo_root)
+    comparison, doc_result = parser.compare_with_actual_files(inventory)
+    
+    print("📚 文档解析完成\n")
+    
+    print("📊 统计信息:")
+    stats = comparison['statistics']
+    print(f"  实际文件数: {stats['total_actual_files']}")
+    print(f"  文档化文件数: {stats['total_documented_files']}")
+    print(f"  引用文件数: {stats['total_referenced_files']}")
+    print(f"  未文档化文件数: {stats['undocumented_count']}")
+    print(f"  缺失文件数: {stats['missing_count']}")
+    
+    print(f"\n📝 文档摘要:")
+    for doc, summary in doc_result['doc_summary'].items():
+        print(f"  {doc}:")
+        print(f"    代码块: {summary['code_blocks']} 个")
+        print(f"    文件引用: {summary['file_references']} 个")
+    
+    print(f"\n🆕 存在但未文档化的文件 ({len(comparison['existing_but_undocumented'])}):")
+    for file_path in sorted(comparison['existing_but_undocumented']):
+        print(f"  - {file_path}")
+    
+    print(f"\n❌ 文档化但缺失的文件 ({len(comparison['documented_but_missing'])}):")
+    for file_path in sorted(comparison['documented_but_missing']):
+        print(f"  - {file_path}")
+    
+    print(f"\n✅ 文档化且存在的文件 ({len(comparison['documented_and_existing'])}):")
+    for file_path in sorted(comparison['documented_and_existing']):
+        print(f"  - {file_path}")
+    
+    # 保存分析结果
+    output_file = os.path.join(repo_root, 'scripts', 'doc_analysis.json')
+    analysis_result = {
+        'comparison': comparison,
+        'documentation_result': doc_result
+    }
+    
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(analysis_result, f, ensure_ascii=False, indent=2, default=list)
+    
+    print(f"\n💾 分析结果已保存到: {output_file}")
+    
+    return analysis_result
+
+if __name__ == "__main__":
+    main()
+```
+
+
+#### scripts/doc_analysis.json
+
+scripts目录下的json文件，doc_analysis.json
+
+```json
+{
+  "comparison": {
+    "existing_but_undocumented": [
+      "scripts/4.2.9 初始化数据库.sh",
+      "scripts/auto_doc_integration.py",
+      "scripts/auto_doc_completion.py",
+      "scripts/4.2.2 创建命名空间.sh",
+      "scripts/auto_completion_report.json",
+      "scripts/5.2.2 索引优化.sql",
+      "scripts/doc_parser.py",
+      "scripts/doc_analysis.json",
+      "scripts/4.1.4 停止服务.sh",
+      "auto_review_report.md",
+      "scripts/auto_review_report.md",
+      ".github/workflows/auto-review.yml",
+      "scripts/repo_inventory.json"
+    ],
+    "documented_but_missing": [
+      "/App.vue",
+      "frontend/src/components/HomeworkReview.vue",
+      "/backup-models.sh",
+      "/views/Login.vue",
+      "backend/auth.py",
+      "frontend/src/components/CustomTable.vue",
+      "k8s/backend-deployment.yaml",
+      "frontend/src/components/CustomCard.vue",
+      "frontend/package.js",
+      "/docs/系统UI设计方案文档.md",
+      "frontend/src/components/CustomNav.vue",
+      "后端/database.py",
+      "docker-compose.yml",
+      "k8s/ingress_2.yaml",
+      "k8s/redis-deployment.yaml",
+      "frontend/src/store/index.js",
+      "frontend/src/App.vue",
+      "k8s/edu-ai-backend-deployment.yaml",
+      "k8s/backend-deployment_2.yaml",
+      "backend/utils/sanitizer.py",
+      "/views/TeacherDashboard.vue",
+      "/components/HomeworkReview.vue",
+      "/components/QuestionTable.vue",
+      "github/workflows/auto-review.yml",
+      "backend/controllers/ai.py",
+      "frontend/src/components/ExcelImport.vue",
+      "3.1题库管理流程",
+      "frontend/package.json",
+      "/views/Home.vue",
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "frontend/src/router/index.js",
+      "/path/to/backup-models.sh",
+      "/app/backend/main.py",
+      "/docs/教育AI全栈设计方案.md",
+      "k8s/frontend-deployment.yaml",
+      "/path/to/backup-db.sh",
+      "更新QuestionTable.vue",
+      "/components/HomeworkList.vue",
+      "scripts/cleanup_generated_files.py",
+      "frontend/src/views/TeacherDashboard.vue",
+      "/docs/教育AI题库系统文档.md",
+      "frontend/src/components/QuestionTable.vue",
+      "k8s/network-policy.yaml",
+      "backend/models.py",
+      "/views/StudentDashboard.vue",
+      "frontend/src/components/CustomButton.vue",
+      "k8s/tls-secret.yaml",
+      "k8s/mariadb-configmap_2.yaml",
+      "/backup-db.sh",
+      "12.更新TeacherDashboard.vue",
+      "详细表结构请参考backend/models.py",
+      "/components/CustomCard.vue",
+      "/CustomDialog.vue",
+      "/CustomButton.vue",
+      "backend/main.py",
+      "/restore-db.sh",
+      "项目结构总览",
+      "/CustomTable.vue",
+      "k8s/mariadb-configmap.yaml",
+      "src=\"https://cdn.example.com/js/app.js",
+      "11.更新ExcelImport.vue",
+      "/rollback.sh",
+      "10.更新HomeworkReview.vue",
+      "/components/ExcelImport.vue",
+      "k8s/rename_yaml_by_content.py",
+      "backend/database.py",
+      "backend/utils/cache.py",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "k8s/backend-deployment_3.yaml",
+      "k8s/edu-ai-ingress.yaml",
+      "backend/controllers/question.py",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "k8s/ingress.yaml",
+      "frontend/vite.config.js",
+      "frontend/src/main.js",
+      "/CustomCard.vue",
+      "k8s/redis-persistent.yaml",
+      "frontend/src/api/index.js",
+      "修改backend/database.py",
+      "backend/celery_worker.py",
+      "frontend/src/components/CustomDialog.vue",
+      "/views/AdminPanel.vue",
+      "/components/CustomNav.vue"
+    ],
+    "documented_and_existing": [],
+    "only_referenced": [
+      "k8s/mariadb-configmap.yaml",
+      "docs/教育AI全栈设计方案.md",
+      "src=\"https://cdn.example.com/js/app.js",
+      "/app/backend/main.py",
+      "/docs/教育AI全栈设计方案.md",
+      "k8s/frontend-deployment.yaml",
+      "infra/k8s/tls-secret.yaml",
+      "infra/k8s/mariadb-configmap_2.yaml",
+      "/rollback.sh",
+      "/path/to/backup-db.sh",
+      "scripts/repo_scanner.py",
+      "/App.vue",
+      "scripts/md_code_progress_report.py",
+      "k8s/backend-deployment_2.yaml",
+      "/components/ExcelImport.vue",
+      "/backup-models.sh",
+      "k8s/rename_yaml_by_content.py",
+      "backend/database.py",
+      "/components/HomeworkList.vue",
+      "scripts/cleanup_generated_files.py",
+      "/docs/教育AI题库系统文档.md",
+      "infra/k8s/backend-deployment_2.yaml",
+      "scripts/sync_md_code_by_comment.py",
+      "infra/k8s/redis-deployment.yaml",
+      "backend/utils/cache.py",
+      "backend/utils/sanitizer.py",
+      "scripts/sync_md_code.py",
+      "/views/TeacherDashboard.vue",
+      "/components/HomeworkReview.vue",
+      "/components/QuestionTable.vue",
+      "k8s/network-policy.yaml",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "github/workflows/auto-review.yml",
+      "k8s/backend-deployment_3.yaml",
+      "/views/Login.vue",
+      "/views/StudentDashboard.vue",
+      "infra/k8s/frontend-deployment.yaml",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "k8s/backend-deployment.yaml",
+      "k8s/tls-secret.yaml",
+      "k8s/ingress.yaml",
+      "frontend/package.js",
+      "k8s/mariadb-configmap_2.yaml",
+      "/backup-db.sh",
+      "scripts/auto_review_md_vs_code.py",
+      "/docs/系统UI设计方案文档.md",
+      "infra/k8s/backend-deployment_3.yaml",
+      "infra/k8s/rename_yaml_by_content.py",
+      "详细表结构请参考backend/models.py",
+      "/components/CustomCard.vue",
+      "/CustomCard.vue",
+      "/CustomDialog.vue",
+      "后端/database.py",
+      "/CustomButton.vue",
+      "k8s/redis-persistent.yaml",
+      "修改backend/database.py",
+      "scripts/sync_md_code_autoext.py",
+      "scripts/split_md_code_advanced.py",
+      "/restore-db.sh",
+      "/views/Home.vue",
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "docs/教育AI题库系统文档.md",
+      "infra/k8s/ingress.yaml",
+      "/views/AdminPanel.vue",
+      "infra/k8s/ingress_2.yaml",
+      "scripts/split_md_code_autosave.py",
+      "infra/k8s/redis-persistent.yaml",
+      "docs/系统UI设计方案文档.md",
+      "/components/CustomNav.vue",
+      "/CustomTable.vue",
+      "/path/to/backup-models.sh",
+      "k8s/ingress_2.yaml",
+      "infra/k8s/backend-deployment.yaml",
+      "infra/k8s/mariadb-configmap.yaml",
+      "infra/k8s/network-policy.yaml",
+      "k8s/redis-deployment.yaml"
+    ],
+    "statistics": {
+      "total_actual_files": 37,
+      "total_documented_files": 31,
+      "total_referenced_files": 99,
+      "undocumented_count": 13,
+      "missing_count": 83
+    }
+  },
+  "documentation_result": {
+    "documented_files": {
+      "3.1题库管理流程": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "mermaid",
+        "has_code": true,
+        "code_length": 255
+      },
+      "backend/main.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 842
+      },
+      "backend/models.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 2663
+      },
+      "backend/controllers/question.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 2693
+      },
+      "backend/controllers/ai.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 1210
+      },
+      "backend/celery_worker.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 852
+      },
+      "backend/auth.py": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "python",
+        "has_code": true,
+        "code_length": 1378
+      },
+      "frontend/src/main.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 530
+      },
+      "frontend/src/router/index.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1699
+      },
+      "frontend/src/views/TeacherDashboard.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 938
+      },
+      "frontend/src/components/QuestionTable.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1871
+      },
+      "frontend/src/components/ExcelImport.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1747
+      },
+      "frontend/src/components/HomeworkReview.vue": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1898
+      },
+      "frontend/src/api/index.js": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "javascript",
+        "has_code": true,
+        "code_length": 772
+      },
+      "docker-compose.yml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 1194
+      },
+      "k8s/edu-ai-ingress.yaml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 732
+      },
+      "k8s/edu-ai-backend-deployment.yaml": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "yaml",
+        "has_code": true,
+        "code_length": 738
+      },
+      "项目结构总览": {
+        "source_doc": "docs/教育AI全栈设计方案.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1658
+      },
+      "frontend/src/App.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 515
+      },
+      "frontend/src/components/CustomNav.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2923
+      },
+      "frontend/src/components/CustomDialog.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1421
+      },
+      "frontend/src/components/CustomTable.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 5982
+      },
+      "frontend/src/components/CustomButton.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2830
+      },
+      "frontend/src/components/CustomCard.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1518
+      },
+      "更新QuestionTable.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 3733
+      },
+      "10.更新HomeworkReview.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 2420
+      },
+      "11.更新ExcelImport.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 3570
+      },
+      "12.更新TeacherDashboard.vue": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1479
+      },
+      "frontend/src/store/index.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 1450
+      },
+      "frontend/vite.config.js": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 748
+      },
+      "frontend/package.json": {
+        "source_doc": "docs/系统UI设计方案文档.md",
+        "language": "plaintext",
+        "has_code": true,
+        "code_length": 731
+      }
+    },
+    "code_blocks": [
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI题库系统文档.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI题库系统文档.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "项目结构总览",
+        "language": "plaintext",
+        "code": "edu-ai-question-bank/\n├── backend/\n│   ├── controllers/\n│   │   ├── __init__.py\n│   │   ├── ai.py              # AI批改相关API\n│   │   ├── homework.py        # 作业相关API\n│   │   └── question.py       # 题库相关API\n│   ├── migrations/\n│   │   ├── env.py\n│   │   ├── script.py.mako\n│   │   └── versions/\n│   │       └── 20250101_init.py\n│   ├── static/\n│   │   └── question_import_template.xlsx\n│   ├── __init__.py\n│   ├── auth.py               # JWT认证\n│   ├── celery_worker.py      # Celery异步任务\n│   ├── database.py           # 数据库连接\n│   ├── main.py               # FastAPI入口\n│   ├── models.py             # 数据库模型\n│   ├── requirements.txt      # Python依赖\n│   └── Dockerfile            # 后端Dockerfile\n├── frontend/\n│   ├── public/\n│   │   └── index.html\n│   ├── src/\n│   │   ├── api/\n│   │   │   └── index.js      # axios封装\n│   │   ├── assets/\n│   │   ├── components/\n│   │   │   ├── ExcelImport.vue\n│   │   │   ├── HomeworkList.vue\n│   │   │   ├── HomeworkReview.vue\n│   │   │   └── QuestionTable.vue\n│   │   ├── router/\n│   │   │   └── index.js      # 路由配置\n│   │   ├── store/\n│   │   │   └── index.js      # Pinia状态管理\n│   │   ├── views/\n│   │   │   ├── AdminPanel.vue\n│   │   │   ├── Home.vue\n│   │   │   ├── Login.vue\n│   │   │   ├── StudentDashboard.vue\n│   │   │   ├── TeacherDashboard.vue\n│   │   │   └── Register.vue\n│   │   ├── App.vue\n│   │   └── main.js\n│   ├── package.json\n│   ├── vite.config.js\n│   └── Dockerfile            # 前端Dockerfile\n├── k8s/\n│   ├── edu-ai-backend-deployment.yaml\n│   ├── edu-ai-backend-service.yaml\n│   ├── edu-ai-ingress.yaml\n│   └── redis-deployment.yaml\n├── docker-compose.yml         # 本地开发环境\n└── README.md                 # 项目说明",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "3.1题库管理流程",
+        "language": "mermaid",
+        "code": "graph TD\n    A[教师登录] --> B[进入题库管理]\n    B --> C{操作选择}\n    C -->|创建题目| D[填写题目信息]\n    C -->|编辑题目| E[修改题目信息]\n    C -->|删除题目| F[确认删除]\n    C -->|导入Excel| G[上传Excel文件]\n    D --> H[保存题目]\n    E --> H\n    G --> I[解析Excel数据]\n    I --> H\n    H --> J[更新题库]\n    F --> J",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/main.py",
+        "language": "python",
+        "code": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom backend.controllers import ai, homework, question\nfrom backend.database import engine\nfrom backend.models import Base\n\n# 创建数据库表\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI(title=\"教育AI题库系统\", version=\"1.0.0\")\n\n# 配置CORS\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n# 注册路由\napp.include_router(question.router, prefix=\"/api/questions\", tags=[\"题库管理\"])\napp.include_router(homework.router, prefix=\"/api/homework\", tags=[\"作业管理\"])\napp.include_router(ai.router, prefix=\"/api/ai\", tags=[\"AI服务\"])\n\n@app.get(\"/\")\ndef read_root():\n    return {\"message\": \"教育AI题库系统 API\"}\n\nif __name__ == \"__main__\":\n    import uvicorn\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/models.py",
+        "language": "python",
+        "code": "from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey, DECIMAL\nfrom sqlalchemy.orm import declarative_base, relationship\nimport enum\n\nBase = declarative_base()\n\nclass Difficulty(enum.Enum):\n    easy = '易'\n    medium = '中'\n    hard = '难'\n    olympiad = '奥数'\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    username = Column(String(100), unique=True)\n    password_hash = Column(String(255))\n    name = Column(String(100))\n    role = Column(Enum('student','teacher','admin','parent'))\n    register_time = Column(DateTime)\n\nclass Subject(Base):\n    __tablename__ = 'subjects'\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    description = Column(String(255))\n\nclass Question(Base):\n    __tablename__ = 'questions'\n    id = Column(Integer, primary_key=True)\n    subject_id = Column(Integer, ForeignKey('subjects.id'))\n    type_id = Column(Integer)\n    content = Column(Text)\n    option_a = Column(String(255))\n    option_b = Column(String(255))\n    option_c = Column(String(255))\n    option_d = Column(String(255))\n    answer = Column(String(255))\n    explanation = Column(Text)\n    knowledge_point = Column(String(255))\n    difficulty = Column(Enum(Difficulty))\n    tags = Column(String(255))\n    image_url = Column(String(255))\n    extra_json = Column(Text)\n    created_by = Column(Integer, ForeignKey('users.id'))\n    created_at = Column(DateTime)\n    updated_at = Column(DateTime)\n    subject = relationship(\"Subject\")\n    creator = relationship(\"User\")\n\nclass StudentAnswer(Base):\n    __tablename__ = 'student_answers'\n    id = Column(Integer, primary_key=True)\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    ai_explanation = Column(Text)\n    answer_image_url = Column(String(255))\n    submit_time = Column(DateTime)\n\nclass Homework(Base):\n    __tablename__ = 'homework'\n    id = Column(Integer, primary_key=True)\n    teacher_id = Column(Integer, ForeignKey('users.id'))\n    title = Column(String(255))\n    publish_time = Column(DateTime)\n\nclass HomeworkAssignment(Base):\n    __tablename__ = 'homework_assignments'\n    id = Column(Integer, primary_key=True)\n    homework_id = Column(Integer, ForeignKey('homework.id'))\n    student_id = Column(Integer, ForeignKey('users.id'))\n    question_id = Column(Integer, ForeignKey('questions.id'))\n    answer = Column(Text)\n    score = Column(DECIMAL(5,2))\n    comment = Column(Text)\n    ai_explanation = Column(Text)\n    submit_time = Column(DateTime)\n    review_time = Column(DateTime)",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/question.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response\nfrom sqlalchemy.orm import Session\nfrom backend.models import Question, User\nfrom backend.database import get_db\nfrom backend.auth import get_current_user\nimport pandas as pd\nimport datetime\nimport os\n\nrouter = APIRouter()\n\n@router.get(\"/\")\ndef get_questions(subject_id: int = None, db: Session = Depends(get_db)):\n    query = db.query(Question)\n    if subject_id:\n        query = query.filter(Question.subject_id == subject_id)\n    return {\"items\": [q.to_dict() for q in query.limit(100)]}\n\n@router.post(\"/\", dependencies=[Depends(get_current_user)])\ndef create_question(q: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    nq = Question(**q, created_by=user.id, created_at=datetime.datetime.now())\n    db.add(nq)\n    db.commit()\n    return {\"msg\": \"题目已创建\", \"id\": nq.id}\n\n@router.post(\"/import-excel\", dependencies=[Depends(get_current_user)])\nasync def import_excel(file: UploadFile = File(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    df = pd.read_excel(file.file)\n    for _, row in df.iterrows():\n        nq = Question(\n            content=row['题干'],\n            subject_id=row['学科ID'],\n            difficulty=row['难度'],\n            tags=row.get('标签',''),\n            option_a=row.get('option_a',''),\n            option_b=row.get('option_b',''),\n            option_c=row.get('option_c',''),\n            option_d=row.get('option_d',''),\n            answer=row.get('answer',''),\n            explanation=row.get('解析',''),\n            image_url=row.get('image_url',''),\n            extra_json=row.get('extra_json',None),\n            created_by=user.id,\n            created_at=datetime.datetime.now()\n        )\n        db.add(nq)\n    db.commit()\n    return {\"msg\": \"Excel导入成功\"}\n\n@router.get(\"/excel-template\")\ndef download_excel_template():\n    template_path = \"static/question_import_template.xlsx\"\n    if not os.path.exists(template_path):\n        # 创建模板文件\n        import pandas as pd\n        df = pd.DataFrame([{\n            \"题干\": \"勾股定理是什么\",\n            \"学科ID\": 1,\n            \"难度\": \"奥数\",\n            \"标签\": \"数学\",\n            \"option_a\": \"\",\n            \"option_b\": \"\",\n            \"option_c\": \"\",\n            \"option_d\": \"\",\n            \"answer\": \"\",\n            \"解析\": \"a^2+b^2=c^2\",\n            \"image_url\": \"http://xxx\",\n            \"extra_json\": '{\"latex\":\"a^2+b^2=c^2\"}'\n        }])\n        os.makedirs(\"static\", exist_ok=True)\n        df.to_excel(template_path, index=False)\n    return Response(content=open(template_path, \"rb\").read(), \n                   media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\")",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/controllers/ai.py",
+        "language": "python",
+        "code": "from fastapi import APIRouter, Depends, BackgroundTasks\nfrom backend.auth import get_current_user\nfrom backend.celery_worker import grade_answer\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import StudentAnswer, User\nimport datetime\n\nrouter = APIRouter()\n\n@router.post(\"/grade\")\ndef ai_grade(payload: dict, db: Session = Depends(get_db), user: User = Depends(get_current_user)):\n    task = grade_answer.apply_async(args=(payload.get('model', 'gemma-3-270m'), payload['question'], payload['answer']))\n    # 保存答题记录，状态pending\n    sa = StudentAnswer(\n        question_id=payload.get('question_id'),\n        student_id=user.id,\n        answer=payload['answer'],\n        score=None,\n        ai_explanation='',\n        answer_image_url=payload.get('answer_image_url',''),\n        submit_time=datetime.datetime.now()\n    )\n    db.add(sa)\n    db.commit()\n    return {\"task_id\": task.id}\n\n@router.get(\"/grade-result/{task_id}\")\ndef get_grade_result(task_id: str):\n    from backend.celery_worker import grade_answer\n    task = grade_answer.AsyncResult(task_id)\n    if not task.ready():\n        return {\"status\": \"pending\"}\n    return {\"status\": \"done\", \"result\": task.result}",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/celery_worker.py",
+        "language": "python",
+        "code": "from celery import Celery\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ncelery_app = Celery('ai_tasks', broker='redis://redis:6379/0')\n\nMODEL_CACHE = {}\n\ndef load_model(model_name):\n    if model_name not in MODEL_CACHE:\n        path = f\"/mnt/nas/models/{model_name}\"\n        tokenizer = AutoTokenizer.from_pretrained(path)\n        model = AutoModelForCausalLM.from_pretrained(path)\n        MODEL_CACHE[model_name] = (tokenizer, model)\n    return MODEL_CACHE[model_name]\n\n@celery_app.task\ndef grade_answer(model_name, question, answer):\n    tokenizer, model = load_model(model_name)\n    prompt = f\"题目：{question}\\n学生答案：{answer}\\n请判断正误并给出解析：\"\n    inputs = tokenizer(prompt, return_tensors=\"pt\")\n    outputs = model.generate(**inputs, max_new_tokens=128)\n    result = tokenizer.decode(outputs[0], skip_special_tokens=True)\n    return result",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "backend/auth.py",
+        "language": "python",
+        "code": "from fastapi import Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordBearer\nfrom jose import JWTError, jwt\nfrom sqlalchemy.orm import Session\nfrom backend.database import get_db\nfrom backend.models import User\nimport datetime\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt\n\nasync def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    try:\n        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n        username: str = payload.get(\"sub\")\n        if username is None:\n            raise credentials_exception\n    except JWTError:\n        raise credentials_exception\n    \n    user = db.query(User).filter(User.username == username).first()\n    if user is None:\n        raise credentials_exception\n    return user",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "javascript",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(router)\napp.mount('#app')",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "javascript",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  { path: '/login', component: Login },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { requiresAuth: true, role: 'student' } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { requiresAuth: true, role: 'teacher' } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { requiresAuth: true, role: 'admin' } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/views/TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <h1>教师控制台</h1>\n    <el-tabs v-model=\"activeTab\">\n      <el-tab-pane label=\"题库管理\" name=\"questions\">\n        <QuestionTable @importExcel=\"showImport = true\" />\n        <ExcelImport v-if=\"showImport\" @close=\"showImport = false\" />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业管理\" name=\"homework\">\n        <HomeworkList />\n      </el-tab-pane>\n      <el-tab-pane label=\"作业批改\" name=\"review\">\n        <HomeworkReview />\n      </el-tab-pane>\n    </el-tabs>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  padding: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <div class=\"actions\">\n      <el-button type=\"primary\" @click=\"$emit('importExcel')\">Excel导入</el-button>\n    </div>\n    \n    <el-table :data=\"questions\" style=\"width: 100%\">\n      <el-table-column prop=\"content\" label=\"题干\" />\n      <el-table-column prop=\"difficulty\" label=\"难度\" />\n      <el-table-column prop=\"tags\" label=\"标签\" />\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button @click=\"viewQuestion(scope.row)\">查看</el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n    \n    <el-dialog v-model=\"dialogVisible\" title=\"题目详情\" width=\"50%\">\n      <div v-if=\"selectedQuestion\">\n        <p><strong>题干:</strong> {{ selectedQuestion.content }}</p>\n        <p v-if=\"selectedQuestion.image_url\">\n          <img :src=\"selectedQuestion.image_url\" style=\"max-width: 300px;\" />\n        </p>\n        <p><strong>难度:</strong> {{ selectedQuestion.difficulty }}</p>\n        <p><strong>标签:</strong> {{ selectedQuestion.tags }}</p>\n        <p><strong>解析:</strong> {{ selectedQuestion.explanation }}</p>\n      </div>\n      <template #footer>\n        <el-button @click=\"dialogVisible = false\">关闭</el-button>\n      </template>\n    </el-dialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n.actions {\n  margin-bottom: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"excel-import\">\n    <el-card>\n      <h2>题库Excel导入</h2>\n      <div class=\"template-download\">\n        <el-link :href=\"templateUrl\" target=\"_blank\">下载Excel模板</el-link>\n      </div>\n      \n      <el-upload\n        class=\"upload-demo\"\n        :action=\"uploadUrl\"\n        :headers=\"{ Authorization: 'Bearer ' + token }\"\n        :on-success=\"handleSuccess\"\n        :on-error=\"handleError\"\n        :file-list=\"fileList\"\n        accept=\".xlsx, .xls\"\n      >\n        <el-button type=\"primary\">点击上传</el-button>\n        <template #tip>\n          <div class=\"el-upload__tip\">\n            只能上传xlsx/xls文件，且不超过10MB\n          </div>\n        </template>\n      </el-upload>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        style=\"margin-top: 20px;\"\n      />\n      \n      <div class=\"actions\">\n        <el-button @click=\"$emit('close')\">关闭</el-button>\n      </div>\n    </el-card>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport axios from '@/api'\n\nconst emit = defineEmits(['close'])\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst fileList = ref([])\nconst message = ref('')\nconst messageType = ref('success')\n\nconst handleSuccess = (response) => {\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n}\n\nconst handleError = (error) => {\n  message.value = '导入失败'\n  messageType.value = 'error'\n  console.error('导入错误:', error)\n}\n</script>\n\n<style scoped>\n.excel-import {\n  margin-top: 20px;\n}\n.template-download {\n  margin-bottom: 20px;\n}\n.actions {\n  margin-top: 20px;\n  text-align: right;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/components/HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <h2>作业批改</h2>\n    \n    <el-table :data=\"assignments\" style=\"width: 100%\">\n      <el-table-column prop=\"studentName\" label=\"学生\" />\n      <el-table-column prop=\"question\" label=\"题目\" />\n      <el-table-column prop=\"answer\" label=\"学生答案\" />\n      <el-table-column prop=\"ai_explanation\" label=\"AI解析\" />\n      <el-table-column label=\"评分\">\n        <template #default=\"scope\">\n          <el-input-number \n            v-model=\"scope.row.score\" \n            :min=\"0\" \n            :max=\"100\" \n            :precision=\"1\"\n          />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"批语\">\n        <template #default=\"scope\">\n          <el-input v-model=\"scope.row.comment\" />\n        </template>\n      </el-table-column>\n      <el-table-column label=\"操作\">\n        <template #default=\"scope\">\n          <el-button \n            type=\"primary\" \n            @click=\"submitReview(scope.row)\"\n            :disabled=\"scope.row.submitted\"\n          >\n            {{ scope.row.submitted ? '已提交' : '提交' }}\n          </el-button>\n        </template>\n      </el-table-column>\n    </el-table>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/api/index.js",
+        "language": "javascript",
+        "code": "import axios from 'axios'\nimport { ElMessage } from 'element-plus'\n\nconst api = axios.create({\n  baseURL: '/api', // 配置代理\n  timeout: 10000\n})\n\n// 请求拦截器\napi.interceptors.request.use(\n  config => {\n    const token = localStorage.getItem('token')\n    if (token) {\n      config.headers.Authorization = `Bearer ${token}`\n    }\n    return config\n  },\n  error => {\n    return Promise.reject(error)\n  }\n)\n\n// 响应拦截器\napi.interceptors.response.use(\n  response => {\n    return response.data\n  },\n  error => {\n    if (error.response && error.response.status === 401) {\n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n      window.location.href = '/login'\n      ElMessage.error('登录已过期，请重新登录')\n    }\n    return Promise.reject(error)\n  }\n)\n\nexport default api",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "docker-compose.yml",
+        "language": "yaml",
+        "code": "version: '3.8'\n\nservices:\n  backend:\n    build: ./backend\n    container_name: edu-ai-backend\n    ports:\n      - \"8000:8000\"\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis\n\n  frontend:\n    build: ./frontend\n    container_name: edu-ai-frontend\n    ports:\n      - \"5173:80\"\n    depends_on:\n      - backend\n\n  mariadb:\n    image: mariadb:10.6\n    container_name: edu-ai-mariadb\n    environment:\n      MYSQL_ROOT_PASSWORD: yourpassword\n      MYSQL_DATABASE: edu_ai_db\n    volumes:\n      - /mnt/nas/db:/var/lib/mysql\n    ports:\n      - \"3306:3306\"\n\n  redis:\n    image: redis:6-alpine\n    container_name: edu-ai-redis\n    ports:\n      - \"6379:6379\"\n\n  celery:\n    build: \n      context: ./backend\n      dockerfile: Dockerfile.celery\n    container_name: edu-ai-celery\n    environment:\n      - DATABASE_URL=mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\n      - CELERY_BROKER_URL=redis://redis:6379/0\n    volumes:\n      - /mnt/nas/models:/mnt/nas/models\n    depends_on:\n      - mariadb\n      - redis",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-ingress.yaml",
+        "language": "yaml",
+        "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: edu-ai-ingress\n  annotations:\n    nginx.ingress.kubernetes.io/rewrite-target: /$2\n    nginx.ingress.kubernetes.io/ssl-redirect: \"true\"\n    cert-manager.io/cluster-issuer: \"letsencrypt-prod\"\nspec:\n  tls:\n  - hosts:\n    - ai.yourdomain.com\n    secretName: edu-ai-tls\n  rules:\n  - host: ai.yourdomain.com\n    http:\n      paths:\n      - path: /api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-backend-service\n            port:\n              number: 8000\n      - path: /()(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: edu-ai-frontend-service\n            port:\n              number: 80",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "k8s/edu-ai-backend-deployment.yaml",
+        "language": "yaml",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edu-ai-backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: edu-ai-backend\n  template:\n    metadata:\n      labels:\n        app: edu-ai-backend\n    spec:\n      containers:\n      - name: backend\n        image: yourrepo/edu-ai-backend:latest\n        ports:\n        - containerPort: 8000\n        env:\n        - name: DATABASE_URL\n          value: \"mysql+pymysql://root:yourpassword@mariadb:3306/edu_ai_db\"\n        - name: CELERY_BROKER_URL\n          value: \"redis://redis:6379/0\"\n        volumeMounts:\n        - name: nas-models\n          mountPath: /mnt/nas/models\n      volumes:\n      - name: nas-models\n        persistentVolumeClaim:\n          claimName: nas-models-pvc",
+        "source_doc": "docs/教育AI全栈设计方案.md"
+      },
+      {
+        "filename": "frontend/src/App.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div id=\"app\">\n    <router-view v-slot=\"{ Component }\">\n      <transition name=\"page-fade\" mode=\"out-in\">\n        <component :is=\"Component\" />\n      </transition>\n    </router-view>\n  </div>\n</template>\n\n<script setup>\n// 引入全局样式\nimport './styles/theme.css'\n</script>\n\n<style>\n#app {\n  font-family: var(--font-family);\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  color: var(--text-primary);\n  background-color: var(--background-color);\n  min-height: 100vh;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomNav.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <nav class=\"custom-nav\">\n    <div class=\"nav-container\">\n      <div class=\"nav-logo\">\n        <img src=\"@/assets/logo.png\" alt=\"Logo\" class=\"logo\" />\n        <span class=\"logo-text\">教育AI题库系统</span>\n      </div>\n      <div class=\"nav-menu\">\n        <div \n          v-for=\"item in menuItems\" \n          :key=\"item.path\" \n          class=\"nav-item\" \n          :class=\"{ active: currentPath === item.path }\"\n          @click=\"navigateTo(item.path)\"\n        >\n          {{ item.title }}\n        </div>\n      </div>\n      <div class=\"nav-user\">\n        <el-dropdown v-if=\"user\" trigger=\"click\">\n          <div class=\"user-info\">\n            <el-avatar :size=\"32\" :src=\"user.avatar || defaultAvatar\" />\n            <span class=\"username\">{{ user.name || user.username }}</span>\n          </div>\n          <template #dropdown>\n            <el-dropdown-menu>\n              <el-dropdown-item @click=\"goToProfile\">个人中心</el-dropdown-item>\n              <el-dropdown-item @click=\"logout\">退出登录</el-dropdown-item>\n            </el-dropdown-menu>\n          </template>\n        </el-dropdown>\n        <el-button v-else type=\"primary\" @click=\"goToLogin\">登录</el-button>\n      </div>\n    </div>\n  </nav>\n</template>\n\n<script setup>\nimport { ref, computed } from 'vue'\nimport { useRouter, useRoute } from 'vue-router'\nimport { useUserStore } from '@/store'\n\nconst router = useRouter()\nconst route = useRoute()\nconst userStore = useUserStore()\n\nconst currentPath = computed(() => route.path)\nconst user = computed(() => userStore.user)\nconst defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'\n\nconst menuItems = [\n  { title: '首页', path: '/' },\n  { title: '题库', path: '/questions' },\n  { title: '作业', path: '/homework' },\n  { title: '关于', path: '/about' }\n]\n\nconst navigateTo = (path) => {\n  router.push(path)\n}\n\nconst goToLogin = () => {\n  router.push('/login')\n}\n\nconst goToProfile = () => {\n  router.push('/profile')\n}\n\nconst logout = () => {\n  userStore.logout()\n  router.push('/login')\n}\n</script>\n\n<style scoped>\n.custom-nav {\n  background: var(--background-white);\n  box-shadow: var(--box-shadow-light);\n  position: sticky;\n  top: 0;\n  z-index: 1000;\n}\n\n.nav-container {\n  max-width: 1200px;\n  margin: 0 auto;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 60px;\n  padding: 0 20px;\n}\n\n.nav-logo {\n  display: flex;\n  align-items: center;\n}\n\n.logo {\n  height: 32px;\n  margin-right: 10px;\n}\n\n.logo-text {\n  font-size: 18px;\n  font-weight: 600;\n  color: var(--primary-color);\n}\n\n.nav-menu {\n  display: flex;\n  height: 100%;\n}\n\n.nav-user {\n  display: flex;\n  align-items: center;\n}\n\n.user-info {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n}\n\n.username {\n  margin-left: 10px;\n  font-size: 14px;\n  color: var(--text-regular);\n}\n\n@media (max-width: 768px) {\n  .logo-text {\n    display: none;\n  }\n  \n  .nav-menu {\n    display: none;\n  }\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomDialog.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <el-dialog\n    v-model=\"visible\"\n    :title=\"title\"\n    :width=\"width\"\n    :before-close=\"handleClose\"\n    class=\"custom-dialog\"\n    :close-on-click-modal=\"false\"\n    destroy-on-close\n  >\n    <div class=\"dialog-content\">\n      <slot></slot>\n    </div>\n    <template #footer>\n      <div class=\"dialog-footer\">\n        <slot name=\"footer\">\n          <el-button @click=\"handleClose\">取消</el-button>\n          <el-button type=\"primary\" @click=\"handleConfirm\">确定</el-button>\n        </slot>\n      </div>\n    </template>\n  </el-dialog>\n</template>\n\n<script setup>\nimport { ref, watch } from 'vue'\n\nconst props = defineProps({\n  modelValue: {\n    type: Boolean,\n    default: false\n  },\n  title: {\n    type: String,\n    default: '提示'\n  },\n  width: {\n    type: String,\n    default: '50%'\n  }\n})\n\nconst emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])\n\nconst visible = ref(props.modelValue)\n\nwatch(() => props.modelValue, (val) => {\n  visible.value = val\n})\n\nwatch(visible, (val) => {\n  emit('update:modelValue', val)\n})\n\nconst handleClose = () => {\n  visible.value = false\n  emit('cancel')\n}\n\nconst handleConfirm = () => {\n  emit('confirm')\n  visible.value = false\n}\n</script>\n\n<style scoped>\n.custom-dialog {\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n}\n\n.dialog-content {\n  padding: 20px 0;\n}\n\n.dialog-footer {\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"custom-table-container\">\n    <el-table\n      :data=\"data\"\n      :border=\"border\"\n      :stripe=\"stripe\"\n      :height=\"height\"\n      :max-height=\"maxHeight\"\n      :row-key=\"rowKey\"\n      :tree-props=\"treeProps\"\n      :default-expand-all=\"defaultExpandAll\"\n      :show-summary=\"showSummary\"\n      :sum-text=\"sumText\"\n      :summary-method=\"summaryMethod\"\n      :span-method=\"spanMethod\"\n      :select-on-indeterminate=\"selectOnIndeterminate\"\n      :indent=\"indent\"\n      :lazy=\"lazy\"\n      :load=\"load\"\n      @select=\"handleSelect\"\n      @select-all=\"handleSelectAll\"\n      @selection-change=\"handleSelectionChange\"\n      @cell-mouse-enter=\"handleCellMouseEnter\"\n      @cell-mouse-leave=\"handleCellMouseLeave\"\n      @cell-click=\"handleCellClick\"\n      @cell-dblclick=\"handleCellDblclick\"\n      @row-click=\"handleRowClick\"\n      @row-contextmenu=\"handleRowContextmenu\"\n      @row-dblclick=\"handleRowDblclick\"\n      @header-click=\"handleHeaderClick\"\n      @header-contextmenu=\"handleHeaderContextmenu\"\n      @sort-change=\"handleSortChange\"\n      @filter-change=\"handleFilterChange\"\n      @current-change=\"handleCurrentChange\"\n      @header-dragend=\"handleHeaderDragend\"\n      @expand-change=\"handleExpandChange\"\n      class=\"custom-table\"\n    >\n      <slot></slot>\n    </el-table>\n    \n    <div v-if=\"pagination\" class=\"table-pagination\">\n      <el-pagination\n        v-model:current-page=\"currentPage\"\n        v-model:page-size=\"pageSize\"\n        :page-sizes=\"pageSizes\"\n        :total=\"total\"\n        :layout=\"layout\"\n        :small=\"small\"\n        :background=\"background\"\n        @size-change=\"handleSizeChange\"\n        @current-change=\"handleCurrentChange\"\n      />\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\n\nconst props = defineProps({\n  data: {\n    type: Array,\n    default: () => []\n  },\n  border: {\n    type: Boolean,\n    default: true\n  },\n  stripe: {\n    type: Boolean,\n    default: true\n  },\n  height: [String, Number],\n  maxHeight: [String, Number],\n  rowKey: [String, Function],\n  treeProps: {\n    type: Object,\n    default: () => ({})\n  },\n  defaultExpandAll: {\n    type: Boolean,\n    default: false\n  },\n  showSummary: {\n    type: Boolean,\n    default: false\n  },\n  sumText: {\n    type: String,\n    default: '合计'\n  },\n  summaryMethod: Function,\n  spanMethod: Function,\n  selectOnIndeterminate: {\n    type: Boolean,\n    default: true\n  },\n  indent: {\n    type: Number,\n    default: 16\n  },\n  lazy: {\n    type: Boolean,\n    default: false\n  },\n  load: Function,\n  pagination: {\n    type: Boolean,\n    default: true\n  },\n  total: {\n    type: Number,\n    default: 0\n  },\n  pageSizes: {\n    type: Array,\n    default: () => [10, 20, 50, 100]\n  },\n  layout: {\n    type: String,\n    default: 'total, sizes, prev, pager, next, jumper'\n  },\n  small: {\n    type: Boolean,\n    default: false\n  },\n  background: {\n    type: Boolean,\n    default: true\n  }\n})\n\nconst emit = defineEmits([\n  'select',\n  'select-all',\n  'selection-change',\n  'cell-mouse-enter',\n  'cell-mouse-leave',\n  'cell-click',\n  'cell-dblclick',\n  'row-click',\n  'row-contextmenu',\n  'row-dblclick',\n  'header-click',\n  'header-contextmenu',\n  'sort-change',\n  'filter-change',\n  'current-change',\n  'header-dragend',\n  'expand-change',\n  'size-change',\n  'update:currentPage',\n  'update:pageSize'\n])\n\nconst currentPage = ref(1)\nconst pageSize = ref(10)\n\nconst handleSelect = (selection, row) => {\n  emit('select', selection, row)\n}\n\nconst handleSelectAll = (selection) => {\n  emit('select-all', selection)\n}\n\nconst handleSelectionChange = (selection) => {\n  emit('selection-change', selection)\n}\n\nconst handleCellMouseEnter = (row, column, cell, event) => {\n  emit('cell-mouse-enter', row, column, cell, event)\n}\n\nconst handleCellMouseLeave = (row, column, cell, event) => {\n  emit('cell-mouse-leave', row, column, cell, event)\n}\n\nconst handleCellClick = (row, column, cell, event) => {\n  emit('cell-click', row, column, cell, event)\n}\n\nconst handleCellDblclick = (row, column, cell, event) => {\n  emit('cell-dblclick', row, column, cell, event)\n}\n\nconst handleRowClick = (row, column, event) => {\n  emit('row-click', row, column, event)\n}\n\nconst handleRowContextmenu = (row, column, event) => {\n  emit('row-contextmenu', row, column, event)\n}\n\nconst handleRowDblclick = (row, column, event) => {\n  emit('row-dblclick', row, column, event)\n}\n\nconst handleHeaderClick = (column, event) => {\n  emit('header-click', column, event)\n}\n\nconst handleHeaderContextmenu = (column, event) => {\n  emit('header-contextmenu', column, event)\n}\n\nconst handleSortChange = (column) => {\n  emit('sort-change', column)\n}\n\nconst handleFilterChange = (filters) => {\n  emit('filter-change', filters)\n}\n\nconst handleCurrentChange = (val) => {\n  emit('current-change', val)\n  emit('update:currentPage', val)\n}\n\nconst handleHeaderDragend = (newWidth, oldWidth, column, event) => {\n  emit('header-dragend', newWidth, oldWidth, column, event)\n}\n\nconst handleExpandChange = (row, expanded) => {\n  emit('expand-change', row, expanded)\n}\n\nconst handleSizeChange = (val) => {\n  emit('size-change', val)\n  emit('update:pageSize', val)\n  currentPage.value = 1\n  emit('update:currentPage', 1)\n}\n</script>\n\n<style scoped>\n.custom-table-container {\n  background: var(--background-white);\n  border-radius: var(--border-radius-large);\n  overflow: hidden;\n  box-shadow: var(--box-shadow-light);\n  transition: var(--transition-all);\n}\n\n.custom-table-container:hover {\n  box-shadow: var(--box-shadow-base);\n}\n\n.custom-table {\n  width: 100%;\n}\n\n.custom-table .el-table__header-wrapper {\n  background-color: var(--primary-light);\n}\n\n.custom-table .el-table__header th {\n  background-color: var(--primary-light);\n  color: var(--primary-dark);\n  font-weight: 600;\n  border-bottom: 2px solid var(--primary-color);\n}\n\n.custom-table .el-table__body tr:hover > td {\n  background-color: var(--primary-light);\n}\n\n.table-pagination {\n  padding: 15px;\n  display: flex;\n  justify-content: flex-end;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomButton.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <el-button\n    :type=\"type\"\n    :size=\"size\"\n    :plain=\"plain\"\n    :round=\"round\"\n    :circle=\"circle\"\n    :loading=\"loading\"\n    :disabled=\"disabled\"\n    :icon=\"icon\"\n    :autofocus=\"autofocus\"\n    :native-type=\"nativeType\"\n    :loading-icon=\"loadingIcon\"\n    :use-throttle=\"useThrottle\"\n    :throttle-duration=\"throttleDuration\"\n    @click=\"handleClick\"\n    class=\"custom-button\"\n  >\n    <slot></slot>\n  </el-button>\n</template>\n\n<script setup>\nimport { computed } from 'vue'\n\nconst props = defineProps({\n  type: {\n    type: String,\n    default: 'default'\n  },\n  size: {\n    type: String,\n    default: 'default'\n  },\n  plain: {\n    type: Boolean,\n    default: false\n  },\n  round: {\n    type: Boolean,\n    default: false\n  },\n  circle: {\n    type: Boolean,\n    default: false\n  },\n  loading: {\n    type: Boolean,\n    default: false\n  },\n  disabled: {\n    type: Boolean,\n    default: false\n  },\n  icon: {\n    type: String,\n    default: ''\n  },\n  autofocus: {\n    type: Boolean,\n    default: false\n  },\n  nativeType: {\n    type: String,\n    default: 'button'\n  },\n  loadingIcon: {\n    type: String,\n    default: ''\n  },\n  useThrottle: {\n    type: Boolean,\n    default: true\n  },\n  throttleDuration: {\n    type: Number,\n    default: 300\n  }\n})\n\nconst emit = defineEmits(['click'])\n\nconst handleClick = (event) => {\n  emit('click', event)\n}\n</script>\n\n<style scoped>\n.custom-button {\n  transition: var(--transition-all);\n  border-radius: var(--border-radius-base);\n  font-weight: 500;\n  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);\n}\n\n.custom-button:hover {\n  transform: translateY(-2px);\n  box-shadow: var(--box-shadow-base);\n}\n\n.custom-button:active {\n  transform: translateY(0);\n  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.015);\n}\n\n.custom-button--primary {\n  background-color: var(--primary-color);\n  border-color: var(--primary-color);\n}\n\n.custom-button--primary:hover {\n  background-color: var(--primary-dark);\n  border-color: var(--primary-dark);\n}\n\n.custom-button--success {\n  background-color: var(--success-color);\n  border-color: var(--success-color);\n}\n\n.custom-button--success:hover {\n  background-color: var(--success-dark);\n  border-color: var(--success-dark);\n}\n\n.custom-button--warning {\n  background-color: var(--warning-color);\n  border-color: var(--warning-color);\n}\n\n.custom-button--warning:hover {\n  background-color: var(--warning-dark);\n  border-color: var(--warning-dark);\n}\n\n.custom-button--danger {\n  background-color: var(--danger-color);\n  border-color: var(--danger-color);\n}\n\n.custom-button--danger:hover {\n  background-color: var(--danger-dark);\n  border-color: var(--danger-dark);\n}\n\n.custom-button--info {\n  background-color: var(--info-color);\n  border-color: var(--info-color);\n}\n\n.custom-button--info:hover {\n  background-color: var(--info-dark);\n  border-color: var(--info-dark);\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/components/CustomCard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"custom-card\" :class=\"`custom-card-${variant}`\">\n    <div v-if=\"$slots.header\" class=\"card-header\">\n      <slot name=\"header\"></slot>\n    </div>\n    <div class=\"card-content\">\n      <slot></slot>\n    </div>\n    <div v-if=\"$slots.footer\" class=\"card-footer\">\n      <slot name=\"footer\"></slot>\n    </div>\n  </div>\n</template>\n\n<script setup>\nconst props = defineProps({\n  variant: {\n    type: String,\n    default: 'default',\n    validator: (value) => ['default', 'primary', 'success', 'warning', 'danger', 'info'].includes(value)\n  }\n})\n</script>\n\n<style scoped>\n.custom-card {\n  background: var(--background-white);\n  border-radius: var(--border-radius-large);\n  box-shadow: var(--box-shadow-light);\n  padding: 20px;\n  margin-bottom: 20px;\n  transition: var(--transition-all);\n  border: 1px solid var(--border-light);\n}\n\n.custom-card:hover {\n  box-shadow: var(--box-shadow-base);\n  transform: translateY(-2px);\n}\n\n.custom-card-primary {\n  border-left: 4px solid var(--primary-color);\n}\n\n.custom-card-success {\n  border-left: 4px solid var(--success-color);\n}\n\n.custom-card-warning {\n  border-left: 4px solid var(--warning-color);\n}\n\n.custom-card-danger {\n  border-left: 4px solid var(--danger-color);\n}\n\n.custom-card-info {\n  border-left: 4px solid var(--info-color);\n}\n\n.card-header {\n  padding-bottom: 15px;\n  border-bottom: 1px solid var(--border-light);\n  margin-bottom: 15px;\n}\n\n.card-footer {\n  padding-top: 15px;\n  border-top: 1px solid var(--border-light);\n  margin-top: 15px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "更新QuestionTable.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"question-table\">\n    <CustomCard>\n      <template #header>\n        <div class=\"card-header-content\">\n          <h2>题库管理</h2>\n          <CustomButton type=\"primary\" @click=\"$emit('importExcel')\">\n            <el-icon><Upload /></el-icon>\n            Excel导入\n          </CustomButton>\n        </div>\n      </template>\n      \n      <CustomTable\n        :data=\"questions\"\n        border\n        stripe\n        @row-click=\"viewQuestion\"\n      >\n        <el-table-column prop=\"content\" label=\"题干\" min-width=\"200\" />\n        <el-table-column prop=\"difficulty\" label=\"难度\" width=\"100\" />\n        <el-table-column prop=\"tags\" label=\"标签\" width=\"150\" />\n        <el-table-column label=\"操作\" width=\"100\">\n          <template #default=\"scope\">\n            <CustomButton type=\"primary\" size=\"small\" @click.stop=\"viewQuestion(scope.row)\">\n              查看\n            </CustomButton>\n          </template>\n        </el-table-column>\n      </CustomTable>\n    </CustomCard>\n    \n    <CustomDialog\n      v-model=\"dialogVisible\"\n      title=\"题目详情\"\n      width=\"60%\"\n    >\n      <div v-if=\"selectedQuestion\" class=\"question-detail\">\n        <h3>题干</h3>\n        <p>{{ selectedQuestion.content }}</p>\n        \n        <div v-if=\"selectedQuestion.image_url\" class=\"question-image\">\n          <h3>图片</h3>\n          <el-image \n            :src=\"selectedQuestion.image_url\" \n            fit=\"contain\"\n            style=\"max-width: 100%; max-height: 300px;\"\n          />\n        </div>\n        \n        <div class=\"question-meta\">\n          <div class=\"meta-item\">\n            <span class=\"label\">难度:</span>\n            <span class=\"value\">{{ selectedQuestion.difficulty }}</span>\n          </div>\n          <div class=\"meta-item\">\n            <span class=\"label\">标签:</span>\n            <span class=\"value\">{{ selectedQuestion.tags }}</span>\n          </div>\n        </div>\n        \n        <div class=\"question-explanation\">\n          <h3>解析</h3>\n          <p>{{ selectedQuestion.explanation }}</p>\n        </div>\n      </div>\n      \n      <template #footer>\n        <CustomButton @click=\"dialogVisible = false\">关闭</CustomButton>\n      </template>\n    </CustomDialog>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\nimport CustomCard from './CustomCard.vue'\nimport CustomTable from './CustomTable.vue'\nimport CustomButton from './CustomButton.vue'\nimport CustomDialog from './CustomDialog.vue'\nimport { Upload } from '@element-plus/icons-vue'\n\nconst questions = ref([])\nconst dialogVisible = ref(false)\nconst selectedQuestion = ref(null)\n\nconst emit = defineEmits(['importExcel'])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/questions')\n    questions.value = response.data.items\n  } catch (error) {\n    console.error('获取题库失败:', error)\n  }\n})\n\nconst viewQuestion = (question) => {\n  selectedQuestion.value = question\n  dialogVisible.value = true\n}\n</script>\n\n<style scoped>\n.question-table {\n  margin-top: 20px;\n}\n\n.card-header-content {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.card-header-content h2 {\n  margin: 0;\n  color: var(--text-primary);\n}\n\n.question-detail h3 {\n  margin-top: 20px;\n  margin-bottom: 10px;\n  color: var(--text-primary);\n  font-size: 16px;\n  font-weight: 600;\n}\n\n.question-detail h3:first-child {\n  margin-top: 0;\n}\n\n.question-image {\n  margin-top: 20px;\n}\n\n.question-meta {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: 20px;\n}\n\n.meta-item {\n  margin-right: 30px;\n  margin-bottom: 10px;\n}\n\n.meta-item .label {\n  font-weight: 600;\n  margin-right: 5px;\n  color: var(--text-regular);\n}\n\n.meta-item .value {\n  color: var(--text-primary);\n}\n\n.question-explanation {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "10.更新HomeworkReview.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"homework-review\">\n    <CustomCard>\n      <template #header>\n        <h2>作业批改</h2>\n      </template>\n      \n      <CustomTable\n        :data=\"assignments\"\n        border\n        stripe\n      >\n        <el-table-column prop=\"studentName\" label=\"学生\" width=\"120\" />\n        <el-table-column prop=\"question\" label=\"题目\" min-width=\"200\" />\n        <el-table-column prop=\"answer\" label=\"学生答案\" min-width=\"200\" />\n        <el-table-column prop=\"ai_explanation\" label=\"AI解析\" min-width=\"200\" />\n        <el-table-column label=\"评分\" width=\"150\">\n          <template #default=\"scope\">\n            <el-input-number \n              v-model=\"scope.row.score\" \n              :min=\"0\" \n              :max=\"100\" \n              :precision=\"1\"\n              size=\"small\"\n            />\n          </template>\n        </el-table-column>\n        <el-table-column label=\"批语\" width=\"200\">\n          <template #default=\"scope\">\n            <el-input v-model=\"scope.row.comment\" size=\"small\" />\n          </template>\n        </el-table-column>\n        <el-table-column label=\"操作\" width=\"120\">\n          <template #default=\"scope\">\n            <CustomButton \n              type=\"primary\" \n              size=\"small\" \n              @click=\"submitReview(scope.row)\"\n              :disabled=\"scope.row.submitted\"\n            >\n              {{ scope.row.submitted ? '已提交' : '提交' }}\n            </CustomButton>\n          </template>\n        </el-table-column>\n      </CustomTable>\n    </CustomCard>\n  </div>\n</template>\n\n<script setup>\nimport { ref, onMounted } from 'vue'\nimport axios from '@/api'\nimport { ElMessage } from 'element-plus'\nimport CustomCard from './CustomCard.vue'\nimport CustomTable from './CustomTable.vue'\nimport CustomButton from './CustomButton.vue'\n\nconst assignments = ref([])\n\nonMounted(async () => {\n  try {\n    const response = await axios.get('/homework/review-list')\n    assignments.value = response.data.items\n  } catch (error) {\n    console.error('获取作业列表失败:', error)\n  }\n})\n\nconst submitReview = async (assignment) => {\n  try {\n    await axios.post('/homework/review', {\n      id: assignment.id,\n      score: assignment.score,\n      comment: assignment.comment\n    })\n    \n    assignment.submitted = true\n    ElMessage.success('批改成功')\n  } catch (error) {\n    console.error('提交批改失败:', error)\n    ElMessage.error('提交失败')\n  }\n}\n</script>\n\n<style scoped>\n.homework-review {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "11.更新ExcelImport.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <CustomDialog\n    v-model=\"visible\"\n    title=\"题库Excel导入\"\n    width=\"50%\"\n    @close=\"$emit('close')\"\n  >\n    <div class=\"excel-import-content\">\n      <div class=\"template-download\">\n        <CustomButton type=\"primary\" @click=\"downloadTemplate\">\n          <el-icon><Download /></el-icon>\n          下载Excel模板\n        </CustomButton>\n      </div>\n      \n      <div class=\"upload-section\">\n        <el-upload\n          class=\"upload-demo\"\n          :action=\"uploadUrl\"\n          :headers=\"{ Authorization: 'Bearer ' + token }\"\n          :on-success=\"handleSuccess\"\n          :on-error=\"handleError\"\n          :on-progress=\"handleProgress\"\n          :file-list=\"fileList\"\n          :limit=\"1\"\n          accept=\".xlsx, .xls\"\n          :auto-upload=\"false\"\n          ref=\"uploadRef\"\n        >\n          <template #trigger>\n            <CustomButton type=\"primary\">选择文件</CustomButton>\n          </template>\n          <CustomButton \n            type=\"success\" \n            class=\"upload-btn\"\n            @click=\"submitUpload\"\n            :disabled=\"fileList.length === 0\"\n          >\n            上传\n          </CustomButton>\n          <template #tip>\n            <div class=\"el-upload__tip\">\n              只能上传xlsx/xls文件，且不超过10MB\n            </div>\n          </template>\n        </el-upload>\n      </div>\n      \n      <div v-if=\"uploading\" class=\"upload-progress\">\n        <el-progress :percentage=\"uploadPercentage\" :status=\"uploadStatus\" />\n      </div>\n      \n      <el-alert\n        v-if=\"message\"\n        :title=\"message\"\n        :type=\"messageType\"\n        show-icon\n        :closable=\"false\"\n        style=\"margin-top: 20px;\"\n      />\n    </div>\n    \n    <template #footer>\n      <CustomButton @click=\"$emit('close')\">关闭</CustomButton>\n    </template>\n  </CustomDialog>\n</template>\n\n<script setup>\nimport { ref, computed } from 'vue'\nimport axios from '@/api'\nimport { Download } from '@element-plus/icons-vue'\nimport CustomButton from './CustomButton.vue'\nimport CustomDialog from './CustomDialog.vue'\n\nconst props = defineProps({\n  modelValue: {\n    type: Boolean,\n    default: false\n  }\n})\n\nconst emit = defineEmits(['update:modelValue', 'close'])\n\nconst visible = computed({\n  get: () => props.modelValue,\n  set: (val) => emit('update:modelValue', val)\n})\n\nconst token = localStorage.getItem('token')\nconst templateUrl = '/api/questions/excel-template'\nconst uploadUrl = '/api/questions/import-excel'\nconst uploadRef = ref()\nconst fileList = ref([])\nconst uploading = ref(false)\nconst uploadPercentage = ref(0)\nconst uploadStatus = ref('')\nconst message = ref('')\nconst messageType = ref('success')\n\nconst downloadTemplate = () => {\n  window.open(templateUrl)\n}\n\nconst submitUpload = () => {\n  uploadRef.value.submit()\n}\n\nconst handleSuccess = (response) => {\n  uploading.value = false\n  message.value = response.msg || '导入成功'\n  messageType.value = 'success'\n  fileList.value = []\n  uploadPercentage.value = 100\n  uploadStatus.value = 'success'\n}\n\nconst handleError = (error) => {\n  uploading.value = false\n  message.value = '导入失败'\n  messageType.value = 'error'\n  uploadPercentage.value = 0\n  uploadStatus.value = 'exception'\n  console.error('导入错误:', error)\n}\n\nconst handleProgress = (event) => {\n  uploading.value = true\n  uploadPercentage.value = Math.floor(event.percent)\n  uploadStatus.value = ''\n}\n</script>\n\n<style scoped>\n.excel-import-content {\n  padding: 10px 0;\n}\n\n.template-download {\n  margin-bottom: 20px;\n}\n\n.upload-section {\n  margin-bottom: 20px;\n}\n\n.upload-btn {\n  margin-left: 10px;\n}\n\n.upload-progress {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "12.更新TeacherDashboard.vue",
+        "language": "plaintext",
+        "code": "<template>\n  <div class=\"teacher-dashboard\">\n    <CustomNav />\n    \n    <div class=\"dashboard-container\">\n      <CustomCard>\n        <template #header>\n          <h2>教师控制台</h2>\n        </template>\n        \n        <el-tabs v-model=\"activeTab\" class=\"dashboard-tabs\">\n          <el-tab-pane label=\"题库管理\" name=\"questions\">\n            <QuestionTable @importExcel=\"showImport = true\" />\n            <ExcelImport v-if=\"showImport\" v-model=\"showImport\" @close=\"showImport = false\" />\n          </el-tab-pane>\n          <el-tab-pane label=\"作业管理\" name=\"homework\">\n            <HomeworkList />\n          </el-tab-pane>\n          <el-tab-pane label=\"作业批改\" name=\"review\">\n            <HomeworkReview />\n          </el-tab-pane>\n        </el-tabs>\n      </CustomCard>\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref } from 'vue'\nimport CustomNav from '@/components/CustomNav.vue'\nimport CustomCard from '@/components/CustomCard.vue'\nimport QuestionTable from '@/components/QuestionTable.vue'\nimport ExcelImport from '@/components/ExcelImport.vue'\nimport HomeworkList from '@/components/HomeworkList.vue'\nimport HomeworkReview from '@/components/HomeworkReview.vue'\n\nconst activeTab = ref('questions')\nconst showImport = ref(false)\n</script>\n\n<style scoped>\n.teacher-dashboard {\n  min-height: 100vh;\n  background-color: var(--background-color);\n}\n\n.dashboard-container {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 20px;\n}\n\n.dashboard-tabs {\n  margin-top: 20px;\n}\n</style>",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/router/index.js",
+        "language": "plaintext",
+        "code": "import { createRouter, createWebHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport Login from '../views/Login.vue'\nimport StudentDashboard from '../views/StudentDashboard.vue'\nimport TeacherDashboard from '../views/TeacherDashboard.vue'\nimport AdminPanel from '../views/AdminPanel.vue'\nimport { useUserStore } from '@/store'\n\nconst routes = [\n  { \n    path: '/', \n    component: Home,\n    meta: { title: '首页' }\n  },\n  { \n    path: '/login', \n    component: Login,\n    meta: { title: '登录' }\n  },\n  { \n    path: '/student', \n    component: StudentDashboard, \n    meta: { \n      requiresAuth: true, \n      role: 'student',\n      title: '学生控制台'\n    } \n  },\n  { \n    path: '/teacher', \n    component: TeacherDashboard, \n    meta: { \n      requiresAuth: true, \n      role: 'teacher',\n      title: '教师控制台'\n    } \n  },\n  { \n    path: '/admin', \n    component: AdminPanel, \n    meta: { \n      requiresAuth: true, \n      role: 'admin',\n      title: '管理员控制台'\n    } \n  }\n]\n\nconst router = createRouter({\n  history: createWebHistory(),\n  routes,\n  scrollBehavior(to, from, savedPosition) {\n    if (savedPosition) {\n      return savedPosition\n    } else {\n      return { top: 0 }\n    }\n  }\n})\n\n// 路由守卫\nrouter.beforeEach((to, from, next) => {\n  const userStore = useUserStore()\n  const token = localStorage.getItem('token')\n  const role = localStorage.getItem('role')\n  \n  // 设置页面标题\n  document.title = to.meta.title ? `${to.meta.title} - 教育AI题库系统` : '教育AI题库系统'\n  \n  if (to.meta.requiresAuth) {\n    if (!token) {\n      next('/login')\n    } else if (to.meta.role && to.meta.role !== role) {\n      next('/login')\n    } else {\n      next()\n    }\n  } else {\n    next()\n  }\n})\n\nexport default router",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/store/index.js",
+        "language": "plaintext",
+        "code": "import { createPinia, defineStore } from 'pinia'\nimport axios from '@/api'\n\nconst pinia = createPinia()\n\nexport const useUserStore = defineStore('user', {\n  state: () => ({\n    user: null,\n    token: localStorage.getItem('token') || '',\n    role: localStorage.getItem('role') || ''\n  }),\n  \n  getters: {\n    isLoggedIn: (state) => !!state.token,\n    isAdmin: (state) => state.role === 'admin',\n    isTeacher: (state) => state.role === 'teacher',\n    isStudent: (state) => state.role === 'student'\n  },\n  \n  actions: {\n    async login(username, password) {\n      try {\n        const response = await axios.post('/auth/login', { username, password })\n        const { token, role } = response\n        \n        this.token = token\n        this.role = role\n        \n        localStorage.setItem('token', token)\n        localStorage.setItem('role', role)\n        \n        // 获取用户信息\n        await this.fetchUserInfo()\n        \n        return true\n      } catch (error) {\n        console.error('登录失败:', error)\n        return false\n      }\n    },\n    \n    async fetchUserInfo() {\n      try {\n        const response = await axios.get('/users/me')\n        this.user = response\n      } catch (error) {\n        console.error('获取用户信息失败:', error)\n      }\n    },\n    \n    logout() {\n      this.user = null\n      this.token = ''\n      this.role = ''\n      \n      localStorage.removeItem('token')\n      localStorage.removeItem('role')\n    }\n  }\n})\n\nexport default pinia",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/src/main.js",
+        "language": "plaintext",
+        "code": "import { createApp } from 'vue'\nimport ElementPlus from 'element-plus'\nimport 'element-plus/dist/index.css'\nimport * as ElementPlusIconsVue from '@element-plus/icons-vue'\nimport { createPinia } from 'pinia'\nimport pinia from './store'\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\n\n// 注册所有图标\nfor (const [key, component] of Object.entries(ElementPlusIconsVue)) {\n  app.component(key, component)\n}\n\napp.use(ElementPlus)\napp.use(createPinia())\napp.use(pinia)\napp.use(router)\n\napp.mount('#app')",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/vite.config.js",
+        "language": "plaintext",
+        "code": "import { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\nimport { resolve } from 'path'\n\n// https://vitejs.dev/config/\nexport default defineConfig({\n  plugins: [vue()],\n  resolve: {\n    alias: {\n      '@': resolve(__dirname, 'src')\n    }\n  },\n  server: {\n    port: 5173,\n    proxy: {\n      '/api': {\n        target: 'http://localhost:8000',\n        changeOrigin: true,\n        rewrite: (path) => path.replace(/^\\/api/, '')\n      }\n    }\n  },\n  build: {\n    outDir: 'dist',\n    assetsDir: 'assets',\n    sourcemap: false,\n    chunkSizeWarningLimit: 1500,\n    rollupOptions: {\n      output: {\n        manualChunks(id) {\n          if (id.includes('node_modules')) {\n            return 'vendor'\n          }\n        }\n      }\n    }\n  }\n})",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      },
+      {
+        "filename": "frontend/package.json",
+        "language": "plaintext",
+        "code": "{\n  \"name\": \"edu-ai-frontend\",\n  \"private\": true,\n  \"version\": \"0.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"vite build\",\n    \"preview\": \"vite preview\",\n    \"lint\": \"eslint . --ext vue,js,jsx,cjs,mjs,ts,tsx,cts,mts --fix --ignore-path .gitignore\"\n  },\n  \"dependencies\": {\n    \"@element-plus/icons-vue\": \"^2.1.0\",\n    \"axios\": \"^1.4.0\",\n    \"element-plus\": \"^2.3.8\",\n    \"pinia\": \"^2.1.4\",\n    \"vue\": \"^3.3.4\",\n    \"vue-router\": \"^4.2.4\"\n  },\n  \"devDependencies\": {\n    \"@rushstack/eslint-patch\": \"^1.3.2\",\n    \"@vitejs/plugin-vue\": \"^4.2.3\",\n    \"@vue/eslint-config-prettier\": \"^8.0.0\",\n    \"eslint\": \"^8.45.0\",\n    \"eslint-plugin-vue\": \"^9.15.1\",\n    \"prettier\": \"^3.0.0\",\n    \"vite\": \"^4.4.5\"\n  }\n}",
+        "source_doc": "docs/系统UI设计方案文档.md"
+      }
+    ],
+    "file_references": [
+      "/app/backend/main.py",
+      "/docs/教育AI全栈设计方案.md",
+      "k8s/frontend-deployment.yaml",
+      "/path/to/backup-db.sh",
+      "/App.vue",
+      "frontend/src/components/HomeworkReview.vue",
+      "/backup-models.sh",
+      "/components/HomeworkList.vue",
+      "scripts/cleanup_generated_files.py",
+      "/docs/教育AI题库系统文档.md",
+      "frontend/src/views/TeacherDashboard.vue",
+      "scripts/sync_md_code_by_comment.py",
+      "infra/k8s/backend-deployment_2.yaml",
+      "frontend/src/components/QuestionTable.vue",
+      "k8s/network-policy.yaml",
+      "backend/models.py",
+      "backend/auth.py",
+      "frontend/src/components/CustomTable.vue",
+      "/views/Login.vue",
+      "/views/StudentDashboard.vue",
+      "infra/k8s/frontend-deployment.yaml",
+      "frontend/src/components/CustomButton.vue",
+      "k8s/backend-deployment.yaml",
+      "k8s/tls-secret.yaml",
+      "frontend/src/components/CustomCard.vue",
+      "frontend/package.js",
+      "k8s/mariadb-configmap_2.yaml",
+      "/backup-db.sh",
+      "scripts/auto_review_md_vs_code.py",
+      "/docs/系统UI设计方案文档.md",
+      "详细表结构请参考backend/models.py",
+      "/components/CustomCard.vue",
+      "frontend/src/components/CustomNav.vue",
+      "/CustomDialog.vue",
+      "后端/database.py",
+      "/CustomButton.vue",
+      "backend/main.py",
+      "scripts/sync_md_code_autoext.py",
+      "scripts/split_md_code_advanced.py",
+      "/restore-db.sh",
+      "docs/系统UI设计方案文档.md",
+      "/CustomTable.vue",
+      "k8s/ingress_2.yaml",
+      "infra/k8s/mariadb-configmap.yaml",
+      "infra/k8s/network-policy.yaml",
+      "k8s/redis-deployment.yaml",
+      "k8s/mariadb-configmap.yaml",
+      "docs/教育AI全栈设计方案.md",
+      "src=\"https://cdn.example.com/js/app.js",
+      "infra/k8s/tls-secret.yaml",
+      "frontend/src/store/index.js",
+      "frontend/src/App.vue",
+      "infra/k8s/mariadb-configmap_2.yaml",
+      "/rollback.sh",
+      "scripts/repo_scanner.py",
+      "k8s/edu-ai-backend-deployment.yaml",
+      "scripts/md_code_progress_report.py",
+      "k8s/backend-deployment_2.yaml",
+      "/components/ExcelImport.vue",
+      "k8s/rename_yaml_by_content.py",
+      "backend/database.py",
+      "infra/k8s/redis-deployment.yaml",
+      "backend/utils/cache.py",
+      "backend/utils/sanitizer.py",
+      "scripts/sync_md_code.py",
+      "/views/TeacherDashboard.vue",
+      "/components/HomeworkReview.vue",
+      "/components/QuestionTable.vue",
+      "/mnt/nas/backups/edu_ai_db_20231001_020000.sql",
+      "github/workflows/auto-review.yml",
+      "k8s/backend-deployment_3.yaml",
+      "k8s/edu-ai-ingress.yaml",
+      "backend/controllers/question.py",
+      "BACKUP_DIR/edu_ai_db_$DATE.sql",
+      "backend/controllers/ai.py",
+      "k8s/ingress.yaml",
+      "frontend/vite.config.js",
+      "frontend/src/components/ExcelImport.vue",
+      "infra/k8s/backend-deployment_3.yaml",
+      "infra/k8s/rename_yaml_by_content.py",
+      "frontend/src/main.js",
+      "/CustomCard.vue",
+      "k8s/redis-persistent.yaml",
+      "frontend/src/api/index.js",
+      "修改backend/database.py",
+      "/views/Home.vue",
+      "media_type=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+      "backend/celery_worker.py",
+      "docs/教育AI题库系统文档.md",
+      "frontend/src/router/index.js",
+      "frontend/src/components/CustomDialog.vue",
+      "/views/AdminPanel.vue",
+      "infra/k8s/ingress_2.yaml",
+      "scripts/split_md_code_autosave.py",
+      "infra/k8s/redis-persistent.yaml",
+      "/components/CustomNav.vue",
+      "/path/to/backup-models.sh",
+      "infra/k8s/backend-deployment.yaml",
+      "infra/k8s/ingress.yaml"
+    ],
+    "missing_files": [],
+    "doc_summary": {
+      "docs/教育AI题库系统文档.md": {
+        "code_blocks": 2,
+        "file_references": 50,
+        "size": 77467
+      },
+      "docs/教育AI全栈设计方案.md": {
+        "code_blocks": 67,
+        "file_references": 63,
+        "size": 119602
+      },
+      "docs/系统UI设计方案文档.md": {
+        "code_blocks": 15,
+        "file_references": 29,
+        "size": 39625
+      }
+    }
+  }
+}
+```
+
+
+#### scripts/4.1.4 停止服务.sh
+
+系统运维Shell脚本，用于服务管理、数据库操作和系统维护
+
+```bash
+docker-compose down
+```
+
+
+#### scripts/repo_inventory.json
+
+scripts目录下的json文件，repo_inventory.json
+
+```json
+{
+  "summary": {
+    "total_files": 37,
+    "categories": {
+      "other": 2,
+      "frontend": 2,
+      "docs": 2,
+      "scripts": 19,
+      "backend": 3,
+      "infrastructure": 9
+    },
+    "file_types": {
+      "markdown": 5,
+      "bash": 3,
+      "python": 12,
+      "sql": 1,
+      "json": 3,
+      "yaml": 13
+    }
+  },
+  "files": [
+    {
+      "path": "auto_review_report.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/auto_review_report.md",
+      "category": "other",
+      "type": "markdown",
+      "size": 46,
+      "is_documented": false
+    },
+    {
+      "path": "docs/系统UI设计方案文档.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/系统UI设计方案文档.md",
+      "category": "frontend",
+      "type": "markdown",
+      "size": 41763,
+      "is_documented": false
+    },
+    {
+      "path": "docs/教育AI全栈设计方案.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI全栈设计方案.md",
+      "category": "docs",
+      "type": "markdown",
+      "size": 144514,
+      "is_documented": false
+    },
+    {
+      "path": "docs/教育AI题库系统文档.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/docs/教育AI题库系统文档.md",
+      "category": "docs",
+      "type": "markdown",
+      "size": 98299,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.1.4 停止服务.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.1.4 停止服务.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 20,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_review_report.md",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_review_report.md",
+      "category": "scripts",
+      "type": "markdown",
+      "size": 1145,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_doc_integration.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_doc_integration.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2610,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/md_code_progress_report.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/md_code_progress_report.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2879,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/5.2.2 索引优化.sql",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/5.2.2 索引优化.sql",
+      "category": "scripts",
+      "type": "sql",
+      "size": 604,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code_autoext.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code_autoext.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 1437,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/repo_inventory.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/repo_inventory.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 9077,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code_by_comment.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code_by_comment.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 1559,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_completion_report.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_completion_report.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 2161,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.2.2 创建命名空间.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.2.2 创建命名空间.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 39,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_review_md_vs_code.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_review_md_vs_code.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2686,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/doc_parser.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/doc_parser.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 9104,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/4.2.9 初始化数据库.sh",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/4.2.9 初始化数据库.sh",
+      "category": "scripts",
+      "type": "bash",
+      "size": 519,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/doc_analysis.json",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/doc_analysis.json",
+      "category": "scripts",
+      "type": "json",
+      "size": 160299,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/auto_doc_completion.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/auto_doc_completion.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 15009,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/split_md_code_autosave.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/split_md_code_autosave.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 2348,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/sync_md_code.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/sync_md_code.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 904,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/repo_scanner.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/repo_scanner.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 6328,
+      "is_documented": false
+    },
+    {
+      "path": "scripts/split_md_code_advanced.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/scripts/split_md_code_advanced.py",
+      "category": "scripts",
+      "type": "python",
+      "size": 629,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment_3.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment_3.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 987,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/mariadb-configmap_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/mariadb-configmap_2.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 280,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/tls-secret.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/tls-secret.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 260,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/network-policy.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/network-policy.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 617,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/redis-persistent.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/redis-persistent.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 416,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/mariadb-configmap.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/mariadb-configmap.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 1236,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 288,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/frontend-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/frontend-deployment.yaml",
+      "category": "frontend",
+      "type": "yaml",
+      "size": 640,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/rename_yaml_by_content.py",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/rename_yaml_by_content.py",
+      "category": "infrastructure",
+      "type": "python",
+      "size": 1736,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/redis-deployment.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/redis-deployment.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 678,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/ingress.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/ingress.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 299,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/backend-deployment_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/backend-deployment_2.yaml",
+      "category": "backend",
+      "type": "yaml",
+      "size": 1218,
+      "is_documented": false
+    },
+    {
+      "path": "infra/k8s/ingress_2.yaml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/infra/k8s/ingress_2.yaml",
+      "category": "infrastructure",
+      "type": "yaml",
+      "size": 707,
+      "is_documented": false
+    },
+    {
+      "path": ".github/workflows/auto-review.yml",
+      "absolute_path": "/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank/.github/workflows/auto-review.yml",
+      "category": "other",
+      "type": "yaml",
+      "size": 622,
+      "is_documented": false
+    }
+  ]
+}
 ```
