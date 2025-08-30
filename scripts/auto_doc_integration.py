@@ -25,7 +25,8 @@ def main():
     print("🚀 教育AI题库系统 - 自动文档补全系统")
     print("=" * 50)
     
-    repo_root = '/home/runner/work/Edu-ai-question-bank/Edu-ai-question-bank'
+    # 优先使用环境变量 REPO_ROOT，否则自动检测为当前脚本的父目录
+    repo_root = os.environ.get('REPO_ROOT', os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
     os.chdir(repo_root)
     
     # 步骤1：扫描仓库文件
