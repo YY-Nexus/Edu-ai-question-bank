@@ -225,7 +225,7 @@ def main():
     }
     
     with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(analysis_result, f, ensure_ascii=False, indent=2, default=list)
+        json.dump(analysis_result, f, ensure_ascii=False, indent=2, default=set_converter)
     
     print(f"\n💾 分析结果已保存到: {output_file}")
     
